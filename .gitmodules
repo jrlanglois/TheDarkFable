@@ -1,0 +1,6 @@
+[submodule "submodules/JUCE"]
+	path = submodules/JUCE
+	url = git@github.com:juce-framework/JUCE.git
+[submodule "submodules/squarepine_core"]
+	path = submodules/squarepine_core
+	url = git@github.com:SquarePine/squarepine_core.git
