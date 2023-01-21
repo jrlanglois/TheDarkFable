@@ -83,7 +83,7 @@
 #endif
 
 #ifndef    JUCE_DIRECTSOUND
- //#define JUCE_DIRECTSOUND 1
+ #define   JUCE_DIRECTSOUND 0
 #endif
 
 #ifndef    JUCE_ALSA
@@ -145,7 +145,7 @@
 #endif
 
 #ifndef    JUCE_PLUGINHOST_VST3
- //#define JUCE_PLUGINHOST_VST3 0
+ #define   JUCE_PLUGINHOST_VST3 1
 #endif
 
 #ifndef    JUCE_PLUGINHOST_AU
@@ -207,11 +207,11 @@
 #endif
 
 #ifndef    JUCE_LOAD_CURL_SYMBOLS_LAZILY
- //#define JUCE_LOAD_CURL_SYMBOLS_LAZILY 0
+ #define   JUCE_LOAD_CURL_SYMBOLS_LAZILY 1
 #endif
 
 #ifndef    JUCE_CATCH_UNHANDLED_EXCEPTIONS
- //#define JUCE_CATCH_UNHANDLED_EXCEPTIONS 0
+ #define   JUCE_CATCH_UNHANDLED_EXCEPTIONS 1
 #endif
 
 #ifndef    JUCE_ALLOW_STATIC_NULL_VARIABLES
@@ -223,7 +223,7 @@
 #endif
 
 #ifndef    JUCE_ENABLE_ALLOCATION_HOOKS
- //#define JUCE_ENABLE_ALLOCATION_HOOKS 0
+ #define   JUCE_ENABLE_ALLOCATION_HOOKS 1
 #endif
 
 //==============================================================================
@@ -306,7 +306,7 @@
 // juce_gui_extra flags:
 
 #ifndef    JUCE_WEB_BROWSER
- //#define JUCE_WEB_BROWSER 1
+ #define   JUCE_WEB_BROWSER 0
 #endif
 
 #ifndef    JUCE_USE_WIN_WEBVIEW2
@@ -340,7 +340,7 @@
 // squarepine_core flags:
 
 #ifndef    SQUAREPINE_COMPILE_UNIT_TESTS
- //#define SQUAREPINE_COMPILE_UNIT_TESTS 0
+ #define   SQUAREPINE_COMPILE_UNIT_TESTS 1
 #endif
 
 #ifndef    SQUAREPINE_ARRAY_ITERATION_UNROLLER_MAKE_LINEAR
@@ -379,7 +379,7 @@
 #endif
 
 #ifndef    SQUAREPINE_LOG_OPENGL_INFO
- //#define SQUAREPINE_LOG_OPENGL_INFO 0
+ #define   SQUAREPINE_LOG_OPENGL_INFO 1
 #endif
 
 //==============================================================================
