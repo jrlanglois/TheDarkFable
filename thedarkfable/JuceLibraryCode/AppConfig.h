@@ -43,7 +43,7 @@
 
 #define JUCE_USE_DARK_SPLASH_SCREEN 1
 
-#define JUCE_PROJUCER_VERSION 0x70004
+#define JUCE_PROJUCER_VERSION 0x70009
 
 //==============================================================================
 #define JUCE_MODULE_AVAILABLE_dark_engine                1
@@ -64,6 +64,7 @@
 #define JUCE_MODULE_AVAILABLE_squarepine_audio           1
 #define JUCE_MODULE_AVAILABLE_squarepine_core            1
 #define JUCE_MODULE_AVAILABLE_squarepine_graphics        1
+#define JUCE_MODULE_AVAILABLE_squarepine_opus            1
 
 #define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
 
@@ -223,7 +224,7 @@
 #endif
 
 #ifndef    JUCE_ENABLE_ALLOCATION_HOOKS
- #define   JUCE_ENABLE_ALLOCATION_HOOKS 1
+ //#define JUCE_ENABLE_ALLOCATION_HOOKS 0
 #endif
 
 //==============================================================================
@@ -340,7 +341,7 @@
 // squarepine_core flags:
 
 #ifndef    SQUAREPINE_COMPILE_UNIT_TESTS
- #define   SQUAREPINE_COMPILE_UNIT_TESTS 1
+ //#define SQUAREPINE_COMPILE_UNIT_TESTS 0
 #endif
 
 #ifndef    SQUAREPINE_ARRAY_ITERATION_UNROLLER_MAKE_LINEAR
@@ -353,6 +354,14 @@
 
 #ifndef    SQUAREPINE_LOG_NETWORK_CALLS
  //#define SQUAREPINE_LOG_NETWORK_CALLS 1
+#endif
+
+#ifndef    SQUAREPINE_AUTOCONFIG_MAIN_THREAD_LOG_FILTERS
+ //#define SQUAREPINE_AUTOCONFIG_MAIN_THREAD_LOG_FILTERS 0
+#endif
+
+#ifndef    SQUAREPINE_AUTOLOG_FUNCTION_AND_LINE
+ //#define SQUAREPINE_AUTOLOG_FUNCTION_AND_LINE 0
 #endif
 
 #ifndef    SQUAREPINE_USE_GOOGLE_ANALYTICS

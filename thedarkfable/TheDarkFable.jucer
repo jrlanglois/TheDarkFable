@@ -14,8 +14,7 @@
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" SQUAREPINE_LOG_GOOGLE_ANALYTICS="1"
                JUCE_DIRECTSOUND="0" JUCE_PLUGINHOST_VST3="1" JUCE_LOAD_CURL_SYMBOLS_LAZILY="1"
-               JUCE_CATCH_UNHANDLED_EXCEPTIONS="1" JUCE_ENABLE_ALLOCATION_HOOKS="1"
-               JUCE_WEB_BROWSER="0" SQUAREPINE_COMPILE_UNIT_TESTS="1" SQUAREPINE_LOG_OPENGL_INFO="1"/>
+               JUCE_CATCH_UNHANDLED_EXCEPTIONS="1" JUCE_WEB_BROWSER="0" SQUAREPINE_LOG_OPENGL_INFO="1"/>
   <EXPORTFORMATS>
     <VS2022 targetFolder="builds/vs2022" extraDefs="_SILENCE_CXX23_ALIGNED_STORAGE_DEPRECATION_WARNING=1">
       <CONFIGURATIONS>
@@ -47,6 +46,7 @@
         <MODULEPATH id="juce_dsp" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_graphics" path="../submodules/squarepine_core/modules"/>
         <MODULEPATH id="dark_engine" path="../../TheDarkFable"/>
+        <MODULEPATH id="squarepine_opus" path="../../../SquarePine"/>
       </MODULEPATHS>
     </VS2022>
     <XCODE_IPHONE targetFolder="builds/iOS">
@@ -73,6 +73,7 @@
         <MODULEPATH id="juce_dsp" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_graphics" path="../submodules/squarepine_core/modules"/>
         <MODULEPATH id="dark_engine" path="../../TheDarkFable"/>
+        <MODULEPATH id="squarepine_opus" path="../../../SquarePine"/>
       </MODULEPATHS>
     </XCODE_IPHONE>
     <XCODE_MAC targetFolder="builds/macOS" xcodeValidArchs="arm64,arm64e,x86_64"
@@ -101,6 +102,7 @@
         <MODULEPATH id="juce_dsp" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_graphics" path="../submodules/squarepine_core/modules"/>
         <MODULEPATH id="dark_engine" path="../../TheDarkFable"/>
+        <MODULEPATH id="squarepine_opus" path="../../../SquarePine"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <LINUX_MAKE targetFolder="builds/linux">
@@ -137,6 +139,7 @@
         <MODULEPATH id="juce_dsp" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_graphics" path="../submodules/squarepine_core/modules"/>
         <MODULEPATH id="dark_engine" path="../../TheDarkFable"/>
+        <MODULEPATH id="squarepine_opus" path="../../../SquarePine"/>
       </MODULEPATHS>
     </LINUX_MAKE>
     <ANDROIDSTUDIO targetFolder="builds/android" androidVibratePermissionNeeded="1">
@@ -163,6 +166,7 @@
         <MODULEPATH id="juce_dsp" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_graphics" path="../submodules/squarepine_core/modules"/>
         <MODULEPATH id="dark_engine" path="../../TheDarkFable"/>
+        <MODULEPATH id="squarepine_opus" path="../../../SquarePine"/>
       </MODULEPATHS>
     </ANDROIDSTUDIO>
   </EXPORTFORMATS>
@@ -185,5 +189,6 @@
     <MODULE id="squarepine_audio" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="squarepine_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="squarepine_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="squarepine_opus" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
   </MODULES>
 </JUCERPROJECT>

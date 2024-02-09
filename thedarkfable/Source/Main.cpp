@@ -21,6 +21,19 @@ public:
        #endif
 
         setVisible (true);
+
+/*
+        const File f ("C:/Users/joelr/Music/opus/sample1.opus");
+        std::unique_ptr<AudioFormatReader> v (sp::OpusAudioFormat().createReaderFor (f.createInputStream().release(), true));
+        if (v != nullptr)
+        {
+            DBG ("Opus --- have reader");
+        }
+        else
+        {
+            DBG ("Opus --- no reader");
+        }
+*/
     }
 
     //==============================================================================
