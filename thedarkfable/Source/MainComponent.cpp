@@ -14,7 +14,7 @@ MainComponent::MainComponent()
 MainComponent::~MainComponent()
 {
     gameMapState.removeListener (this);
-    undoManager.clearUndoHistory(); // Do this explicitly because of destruction...
+    undoManager.clearUndoHistory(); // Do this explicitly because of the destruction order.
 }
 
 //==============================================================================

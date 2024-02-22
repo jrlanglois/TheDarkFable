@@ -5,39 +5,73 @@
 using namespace darkEngine;
 
 //==============================================================================
-class GameMapTile final : public Component
+/** @todo
+    - On right click, allow setting type
+    - On hover, change property window
+
+*/
+class GameMapTile final : public TextButton
 {
 public:
     GameMapTile()
     {
         setSize (tileSizePx, tileSizePx);
+        update();
     }
-
-    //==============================================================================
-    static inline constexpr auto tileSizePx = 32;
 
     //==============================================================================
     void setWorldObject (const WorldObject& wo, UndoManager* undoManager)
     {
         state = wo.getState();
         worldObject.reset (new WorldObject (state, undoManager));
-
-        setTopLeftPosition (worldObject->getPosition());
+        update();
     }
 
     //==============================================================================
-    void paint (Graphics&) override
-    {
-    }
-
-    void resized() override
-    {
-    }
+    static inline constexpr auto tileSizePx = 32;
 
 private:
     //==============================================================================
     std::unique_ptr<WorldObject> worldObject;
     ValueTree state;
+
+    //==============================================================================
+    void update()
+    {
+        const auto objName = [this]()
+        {
+            return worldObject != nullptr
+                    ? worldObject->getName()
+                    : TRANS ("(Empty)");
+        }();
+
+        setName (objName);
+        setTitle (objName);
+
+        if (worldObject != nullptr)
+        {
+            setDescription (worldObject->getDescription());
+            setTopLeftPosition (worldObject->getPosition());
+        }
+        else
+        {
+            setDescription ({});
+            setTopLeftPosition ({});
+        }
+
+        auto bt = objName;
+
+        if (worldObject != nullptr)
+        {
+            if (const auto id = worldObject->getIdentifier(); id.isValid())
+                bt << " { id: " << id << " }";
+
+            if (const auto iid = worldObject->getInteractionId(); iid.isNotEmpty())
+                bt << " { iid: " << iid << " }";
+        }
+
+        setButtonText (bt.trim());
+    }
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GameMapTile)
@@ -62,6 +96,8 @@ private:
     GameMap& gameMap;
     OwnedArray<GameMapTile> tiles;
 
+    Grid grid;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GameMapEditorComponent)
 };
@@ -84,12 +120,14 @@ public:
 
 private:
     //==============================================================================
-    GameProcessor gameProcessor;
     UndoManager undoManager;
+    GameProcessor gameProcessor;
     GameMap gameMap { &undoManager };
     ValueTree gameMapState { gameMap.getState() };
     GameMapEditorComponent editor { gameMap };
     Viewport viewport;
+
+    TabbedComponent tabbedComp { TabbedButtonBar::TabsAtTop };
 
     //==============================================================================
     Rectangle<int> calculateMapBounds() const;

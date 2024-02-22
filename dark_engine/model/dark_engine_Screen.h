@@ -9,7 +9,7 @@ public:
     }
 
     /** */
-    virtual void goBack() { }
+    virtual bool goBack() { }
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TextScreen)
@@ -44,13 +44,13 @@ public:
     }
 
     /** */
-    int getNumScreens() const           { return screens.size(); }
+    [[nodiscard]] int getNumScreens() const noexcept    { return screens.size(); }
     /** */
-    void remove (int index)             { screens.remove (index); }
+    void remove (int index)                             { screens.remove (index); }
     /** */
-    void remove (TextScreen* screen)    { screens.removeObject (screen); }
+    void remove (TextScreen* screen)                    { screens.removeObject (screen); }
     /** */
-    void pop (int amount = -1)          { screens.removeLast (amount); }
+    void pop (int amount = 1)                           { screens.removeLast (amount); }
 
 private:
     OwnedArray<TextScreen> screens;

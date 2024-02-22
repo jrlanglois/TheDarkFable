@@ -1,6 +1,3 @@
-
-
-
 /** */
 class GameMap final : public EngineObject
 {
@@ -24,21 +21,6 @@ public:
         setWorldObject (wo, { x, y }, undoManager);
     }
 
-    /** @returns */
-    // [[nodiscard]] static std::unique_ptr<GameMap> parse (const var&);
-
-    /** @returns */
-    // [[nodiscard]] static std::unique_ptr<GameMap> parse (const File&);
-
-    /** @returns */
-    [[nodiscard]] Result save (const File& dest) const
-    {
-        if (dest.replaceWithText (toXmlString()))
-            return Result::ok();
-
-        return Result::fail (TRANS ("Failed to save!"));
-    }
-
     CREATE_INLINE_CLASS_IDENTIFIER (map)
 
 private:
@@ -46,5 +28,3 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GameMap)
 };
-
-

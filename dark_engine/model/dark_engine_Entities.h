@@ -23,6 +23,7 @@ public:
     {
     }
 
+    //==============================================================================
     /** @returns */
     [[nodiscard]] double getDirectionDegrees() const noexcept { return direction.get(); }
 
@@ -44,7 +45,7 @@ public:
     [[nodiscard]] String getDisplayDirection() const
     {
         const auto degs = getDirectionDegrees();
-        if (approximatelyEqual (degs, toDegrees (CardinalDirection::notApplicable)))    return TRANS ("north");
+        if (approximatelyEqual (degs, toDegrees (CardinalDirection::notApplicable)))    return TRANS ("omnidirectional");
         else if (approximatelyEqual (degs, toDegrees (CardinalDirection::north)))       return TRANS ("north");
         else if (approximatelyEqual (degs, toDegrees (CardinalDirection::east)))        return TRANS ("east");
         else if (approximatelyEqual (degs, toDegrees (CardinalDirection::south)))       return TRANS ("south");
@@ -53,6 +54,7 @@ public:
         return String (degs);
     }
 
+    //==============================================================================
     /** @returns */
     [[nodiscard]] bool isNPC() const noexcept { return npc.get(); }
     /** */
@@ -62,6 +64,7 @@ public:
         return *this;
     }
 
+    //==============================================================================
     /** */
     WorldEntity& addInventoryItem (const WorldObject& object, UndoManager* undoManager = nullptr)
     {
@@ -88,18 +91,22 @@ public:
     /** @returns */
     [[nodiscard]] WorldObject getInventoryItem (int index) const noexcept   { return inventory.getChild (index); }
 
+    //==============================================================================
     CREATE_INLINE_CLASS_IDENTIFIER (direction)
     CREATE_INLINE_CLASS_IDENTIFIER (isNPC)
     CREATE_INLINE_CLASS_IDENTIFIER (inventory)
 
 private:
+    //==============================================================================
     CachedValue<bool> npc;
     CachedValue<double> direction;
     ValueTree inventory { inventoryId };
 
+    //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WorldEntity)
 };
 
+//==============================================================================
 /** */
 class Weapon : public WorldEntity
 {
@@ -120,6 +127,7 @@ public:
     {
     }
 
+    //==============================================================================
     #undef SET_GET
     #define SET_GET(Name, varName, paramName) \
         private: \
@@ -146,9 +154,11 @@ public:
     #undef SET_GET
 
 private:
+    //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Weapon)
 };
 
+//==============================================================================
 /** */
 class FightingMove : public EngineObject
 {
@@ -160,6 +170,7 @@ public:
     {
     }
 
+    //==============================================================================
     #undef SET_GET
     #define SET_GET(Type, Name, varName, paramName) \
         private: \
@@ -181,8 +192,7 @@ public:
     SET_GET (bool, MakesPhysicalContact, makesContact, makesPhysicalContact)
     SET_GET (MoveType, MoveType, moveType, newMoveType)
 
-    #undef SET_GET
-
+    //==============================================================================
     #undef SET_GET
     #define SET_GET(Name, varName, paramName) \
         private: \
@@ -210,9 +220,11 @@ public:
     #undef SET_GET
 
 private:
+    //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FightingMove)
 };
 
+//==============================================================================
 /** */
 class FightableEntity : public WorldEntity
 {
@@ -236,6 +248,7 @@ public:
     {
     }
 
+    //==============================================================================
     #undef SET_GET
     #define SET_GET(Type, Name, varName, paramName) \
         private: \
@@ -256,8 +269,7 @@ public:
 
     SET_GET (MoveType, WeakAgainstType, weakAgainstType, newWeakAgainstType)
 
-    #undef SET_GET
-
+    //==============================================================================
     #undef SET_GET
     #define SET_GET(ClassName, varName) \
         private: \
@@ -277,6 +289,7 @@ public:
 
     SET_GET (StatusCondition, statusCondition)
 
+    //==============================================================================
     #undef SET_GET
     #define SET_GET(Name, varName, paramName) \
         private: \
@@ -305,15 +318,18 @@ public:
 
     #undef SET_GET
 
-    /** */
-    bool isAlive() const { return getHitPoints() > 0; }
-    /** */
-    bool isDead() const { return getHitPoints() <= 0; }
+    //==============================================================================
+    /** @returns */
+    bool isAlive() const    { return getHitPoints() > 0; }
+    /** @returns */
+    bool isDead() const     { return getHitPoints() <= 0; }
 
 private:
+    //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FightableEntity)
 };
 
+//==============================================================================
 /** */
 class Player final : public FightableEntity
 {
@@ -336,19 +352,25 @@ public:
     {
     }
 
+    //==============================================================================
     /** @returns */
     [[nodiscard]] int getPlayerIndex() const noexcept { return playerIndex.get(); }
 
+    //==============================================================================
     CREATE_INLINE_CLASS_IDENTIFIER (player)
     CREATE_INLINE_CLASS_IDENTIFIER (playerIndex)
 
 private:
+    //==============================================================================
     CachedValue<int> playerIndex;
 
+    //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Player)
 };
 
-/** */
+//==============================================================================
+/** 
+*/
 class EngineTile : public WorldObject
 {
 public:
@@ -363,25 +385,45 @@ public:
         rope
     };
 
+    //==============================================================================
     /** */
-    EngineTile (Type tileType, UndoManager* undoManager = nullptr) :
+    EngineTile (Type tileType = Type::floor,
+                StringRef interactionId = {},
+                UndoManager* undoManager = nullptr) :
         WorldObject (tileId,
-                     tileType != Type::floor && tileType != Type::wall,
+                     interactionId,
                      undoManager),
-        type (state, typeId, undoManager, static_cast<int> (tileType))
+        type (state, typeId, undoManager, static_cast<int> (Type::floor)),
+        material (state, typeId, undoManager, static_cast<int> (Material::stone)),
+        colour (state, typeId, undoManager, Colours::transparentBlack)
     {
         state.appendChild (inventory, undoManager);
+        setType (tileType, undoManager);
     }
 
+    //==============================================================================
     /** @returns */
-    [[nodiscard]] Type getType() const noexcept                             { return static_cast<Type> (type.get()); }
+    [[nodiscard]] Type getType() const noexcept                                 { return static_cast<Type> (type.get()); }
     /** */
-    void setType (Type newType, UndoManager* undoManager = nullptr)         { type.setValue (static_cast<int> (newType), undoManager); }
+    void setType (Type newType, UndoManager* undoManager = nullptr)             { type.setValue (static_cast<int> (newType), undoManager); }
 
+    //==============================================================================
     /** @returns */
-    [[nodiscard]] int getNumInventoryItems() const noexcept                 { return inventory.getNumChildren(); }
+    [[nodiscard]] Material getMaterial() const noexcept                         { return static_cast<Material> (material.get()); }
+    /** */
+    void setMaterial (Material newMaterial, UndoManager* undoManager = nullptr) { material.setValue (static_cast<int> (newMaterial), undoManager); }
+
+    //==============================================================================
     /** @returns */
-    [[nodiscard]] WorldObject getInventoryItem (int index) const noexcept   { return inventory.getChild (index); }
+    [[nodiscard]] Colour getColour() const noexcept                             { return colour.get(); }
+    /** */
+    void setColour (Colour newColour, UndoManager* undoManager = nullptr)       { colour.setValue (newColour, undoManager); }
+
+    //==============================================================================
+    /** @returns */
+    [[nodiscard]] int getNumInventoryItems() const noexcept                     { return inventory.getNumChildren(); }
+    /** @returns */
+    [[nodiscard]] WorldObject getInventoryItem (int index) const noexcept       { return inventory.getChild (index); }
 
     /** */
     EngineTile& addInventoryItem (const WorldObject& object, UndoManager* undoManager = nullptr)
@@ -404,17 +446,23 @@ public:
         return *this;
     }
 
-    CREATE_INLINE_CLASS_IDENTIFIER (type)
+    //==============================================================================
     CREATE_INLINE_CLASS_IDENTIFIER (tile)
+    CREATE_INLINE_CLASS_IDENTIFIER (type)
+    CREATE_INLINE_CLASS_IDENTIFIER (material)
+    CREATE_INLINE_CLASS_IDENTIFIER (colour)
     CREATE_INLINE_CLASS_IDENTIFIER (inventory)
 
 private:
-    CachedValue<int> type;
+    //==============================================================================
+    CachedValue<int> type, material;
+    CachedValue<Colour> colour;
     ValueTree inventory { inventoryId };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EngineTile)
 };
 
+//==============================================================================
 /** */
 class StairTile final : public EngineTile
 {
@@ -428,25 +476,33 @@ public:
     };
 
     /** */
-    StairTile (Direction startDirection, UndoManager* undoManager = nullptr) :
-        EngineTile (Type::stairs, undoManager),
-        direction (state, directionId, undoManager, static_cast<int> (startDirection))
+    StairTile (Direction startDirection,
+               StringRef interactionId = {},
+               UndoManager* undoManager = nullptr) :
+        EngineTile (Type::stairs, interactionId, undoManager),
+        direction (state, directionId, undoManager, static_cast<int> (Direction::up))
     {
+        setDirection (startDirection, undoManager);
     }
 
+    //==============================================================================
     /** @returns */
     [[nodiscard]] Direction getDirection() const noexcept                           { return static_cast<Direction> (direction.get()); }
     /** */
     void setDirection (Direction newDirection, UndoManager* undoManager = nullptr)  { direction.setValue (static_cast<int> (newDirection), undoManager); }
 
+    //==============================================================================
     CREATE_INLINE_CLASS_IDENTIFIER (direction)
 
 private:
+    //==============================================================================
     CachedValue<int> direction;
 
+    //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StairTile)
 };
 
+//==============================================================================
 /** */
 class DoorTile final : public EngineTile
 {
@@ -460,27 +516,46 @@ public:
         impassable
     };
 
+    //==============================================================================
     /** */
-    DoorTile (LockState startLockState = LockState::unlocked, UndoManager* undoManager = nullptr) :
-        EngineTile (Type::door, undoManager),
-        lockState (state, lockStateId, undoManager, static_cast<int> (startLockState))
+    DoorTile (LockState startLockState = LockState::unlocked,
+              bool shouldBeSecret = false,
+              StringRef interactionId = {},
+              UndoManager* undoManager = nullptr) :
+        EngineTile (Type::door, interactionId, undoManager),
+        lockState (state, lockStateId, undoManager, static_cast<int> (LockState::unlocked)),
+        secret (state, secretId, undoManager, false)
     {
-        setUnlockableIDs (Array<int>(), undoManager);
+        setLockState (startLockState, undoManager);
+        setUnlockableIDs ({}, undoManager);
+        setAsSecret (shouldBeSecret, undoManager);
     }
 
     /** */
-    DoorTile (LockState startLockState, int unlockableID, UndoManager* undoManager = nullptr) :
-        DoorTile (startLockState, undoManager)
+    DoorTile (LockState startLockState,
+              int unlockableID,
+              bool shouldBeSecret = false,
+              StringRef interactionId = {},
+              UndoManager* undoManager = nullptr) :
+        DoorTile (startLockState, shouldBeSecret, interactionId, undoManager)
     {
         jassert (startLockState != LockState::unlocked);
         setUnlockableID (unlockableID, undoManager);
     }
 
+    //==============================================================================
     /** @returns */
     [[nodiscard]] LockState getLockState() const noexcept                           { return static_cast<LockState> (lockState.get()); }
     /** */
     void setLockState (LockState newLockState, UndoManager* undoManager = nullptr)  { lockState.setValue (static_cast<int> (newLockState), undoManager); }
 
+    //==============================================================================
+    /** @returns */
+    [[nodiscard]] bool isSecret() const noexcept                                    { return secret.get(); }
+    /** */
+    void setAsSecret (bool shouldBeSecret, UndoManager* undoManager = nullptr)      { secret.setValue (shouldBeSecret, undoManager); }
+
+    //==============================================================================
     /** @returns */
     [[nodiscard]] Array<int> getUnlockableItemIDs() const noexcept
     {
@@ -523,11 +598,36 @@ public:
         setUnlockableIDs (arr, undoManager);
     }
 
+    //==============================================================================
     CREATE_INLINE_CLASS_IDENTIFIER (lockState)
     CREATE_INLINE_CLASS_IDENTIFIER (unlockableIDs)
+    CREATE_INLINE_CLASS_IDENTIFIER (secret)
 
 private:
+    //==============================================================================
     CachedValue<int> lockState;
+    CachedValue<bool> secret;
 
+    //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DoorTile)
+};
+
+//==============================================================================
+/** */
+class WallTile final : public EngineTile
+{
+public:
+    /** */
+    WallTile (Material material,
+              Colour colour = Colours::transparentBlack,
+              StringRef interactionId = {},
+              UndoManager* undoManager = nullptr) :
+        EngineTile (Type::wall, interactionId, undoManager)
+    {
+        setMaterial (material, undoManager);
+    }
+
+private:
+    //==============================================================================
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WallTile)
 };

@@ -6,22 +6,20 @@ public:
     EngineObject (const Identifier& id, UndoManager* undoManager = nullptr) :
         Identifiable (id),
         state (id),
-        name (state, "name", undoManager),
-        description (state, "description", undoManager)
+        name (state, nameId, undoManager),
+        description (state, descriptionId, undoManager)
     {
     }
 
     /** */
     EngineObject (const ValueTree& startState, UndoManager* undoManager = nullptr) :
-        Identifiable (startState.getType()),
-        state (startState),
-        name (state, "name", undoManager),
-        description (state, "description", undoManager)
+        EngineObject (startState.getType(), undoManager)
     {
+        state = startState;
     }
 
     //==============================================================================
-    /** */
+    /** Untranslated. */
     EngineObject& setName (const String& newName, UndoManager* undoManager = nullptr)
     {
         name.setValue (newName, undoManager);
@@ -31,7 +29,7 @@ public:
     /** @returns */
     [[nodiscard]] String getName() const noexcept { return TRANS (name.get()); }
 
-    /** */
+    /** Untranslated. */
     EngineObject& setDescription (const String& newDescription, UndoManager* undoManager = nullptr)
     {
         description.setValue (newDescription, undoManager);
@@ -43,19 +41,7 @@ public:
 
     //==============================================================================
     /** @returns the state of this EngineObject. */
-    ValueTree getState() const noexcept { return state; }
-
-    /** @returns the type of this EngineObject.
-        The type is specified when the ValueTree is created.
-        @see hasType
-    */
-    Identifier getType() const noexcept { return state.getType(); }
-
-    /** @returns true if the EngineObject has this type.
-        The comparison is case-sensitive.
-        @see getType
-    */
-    bool hasType (const Identifier& typeName) const noexcept { return state.hasType (typeName); }
+    [[nodiscard]] ValueTree getState() const noexcept { return state; }
 
     /** @returns true if the EngineObject has the same type and state as this one.
         @see getType
@@ -140,10 +126,10 @@ public:
         If shouldUpdateSynchronously is true the Value::Listener will be updated synchronously.
         @see ValueSource::sendChangeMessage (bool)
     */
-    Value getPropertyAsValue (const Identifier& nameId, UndoManager* undoManager,
+    Value getPropertyAsValue (const Identifier& propNameId, UndoManager* undoManager,
                               bool shouldUpdateSynchronously = false)
     {
-        return state.getPropertyAsValue (nameId, undoManager, shouldUpdateSynchronously);
+        return state.getPropertyAsValue (propNameId, undoManager, shouldUpdateSynchronously);
     }
 
     //==============================================================================
@@ -152,18 +138,81 @@ public:
         be used to recreate a similar tree by calling ValueTree::fromXml().
         @see fromXml, toXmlString
     */
-    std::unique_ptr<XmlElement> createXml() const { return state.createXml(); }
+    [[nodiscard]] std::unique_ptr<XmlElement> createXml() const { return state.createXml(); }
 
     /** @returns a string containing an XML representation of the tree.
         This is quite handy for debugging purposes, as it provides a quick way to view a tree.
-        @see createXml()
+        @see toJSONString()
     */
-    String toXmlString() const
+    [[nodiscard]] String toXmlString() const
     {
         XmlElement::TextFormat format;
         format.lineWrapLength = 4096;
         return state.toXmlString (format);
     }
+
+    /** @returns a string containing a JSON representation of the tree.
+        This is quite handy for debugging purposes, as it provides a quick way to view a tree.
+        @see toXmlString()
+    */
+    [[nodiscard]] String toJSONString() const
+    {
+        return sp::toJSONString (state);
+    }
+
+    /** @returns */
+    [[nodiscard]] Result saveXML (const File& dest) const
+    {
+        if (dest.replaceWithText (toXmlString()))
+            return Result::ok();
+
+        jassertfalse;
+        return Result::fail (TRANS ("Failed to save!"));
+    }
+
+    /** @returns */
+    [[nodiscard]] Result loadXML (const File& source)
+    {
+        const auto vt = ValueTree::fromXml (source.loadFileAsString());
+
+        if (vt.hasType (getIdentifier()))
+        {
+            state = vt;
+            return Result::ok();
+        }
+
+        jassertfalse;
+        return Result::fail (TRANS ("Failed to load!"));
+    }
+
+    /** @returns */
+    [[nodiscard]] Result saveJSON (const File& dest) const
+    {
+        if (dest.replaceWithText (toJSONString()))
+            return Result::ok();
+
+        jassertfalse;
+        return Result::fail (TRANS ("Failed to save!"));
+    }
+
+    /** @returns */
+    [[nodiscard]] Result loadJSON (const File& source)
+    {
+        const auto vt = createValueTreeFromJSON (source.loadFileAsString(), getIdentifier());
+
+        if (vt.hasType (getIdentifier()))
+        {
+            state = vt;
+            return Result::ok();
+        }
+
+        jassertfalse;
+        return Result::fail (TRANS ("Failed to load!"));
+    }
+
+    //==============================================================================
+    CREATE_INLINE_CLASS_IDENTIFIER (name)
+    CREATE_INLINE_CLASS_IDENTIFIER (description)
 
 protected:
     //==============================================================================
@@ -177,17 +226,18 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EngineObject)
 };
 
+//==============================================================================
 /** */
 class WorldObject : public EngineObject
 {
 public:
     /** */
     WorldObject (const Identifier& id,
-                 bool canUserInteract = false,
+                 StringRef interactionIdToUse = {},
                  UndoManager* undoManager = nullptr) :
         EngineObject (id, undoManager),
         position (state, positionId, undoManager, {}),
-        interactable (state, isInteractableId, undoManager, canUserInteract)
+        interactionId (state, interactionIdId, undoManager, interactionIdToUse)
     {
     }
 
@@ -195,22 +245,39 @@ public:
     WorldObject (const ValueTree& startState, UndoManager* undoManager = nullptr) :
         EngineObject (startState, undoManager),
         position (state, positionId, undoManager, {}),
-        interactable (state, isInteractableId, undoManager)
+        interactionId (state, interactionIdId, undoManager)
     {
     }
 
+    //==============================================================================
     /** */
-    WorldObject& setPosition (Point<int> newPosition, UndoManager* undoManager = nullptr) { position.setValue (newPosition, undoManager); return *this; }
+    WorldObject& setPosition (Point<int> newPosition, UndoManager* undoManager = nullptr)
+    {
+        position.setValue (newPosition, undoManager);
+        return *this;
+    }
     /** */
-    WorldObject& setPosition (int x, int y, UndoManager* undoManager = nullptr) { setPosition ({ x, y }, undoManager); return *this; }
+    WorldObject& setPosition (int x, int y, UndoManager* undoManager = nullptr)
+    {
+        setPosition ({ x, y }, undoManager);
+        return *this;
+    }
     /** @returns */
-    [[nodiscard]] Point<int> getPosition() const noexcept { return position.get(); }
+    [[nodiscard]] Point<int> getPosition() const noexcept   { return position.get(); }
 
+    //==============================================================================
     /** @returns */
-    [[nodiscard]] bool isInteractable() const noexcept { return interactable.get(); }
+    [[nodiscard]] String getInteractionId() const noexcept  { return interactionId.get(); }
+    /** @returns */
+    [[nodiscard]] bool isInteractable() const noexcept      { return getInteractionId().isNotEmpty(); }
     /** */
-    WorldObject& setInteractable (bool canUserInteract, UndoManager* undoManager = nullptr) { interactable.setValue (canUserInteract, undoManager); return *this; }
+    WorldObject& setInteractableId (StringRef newInteractionId, UndoManager* undoManager = nullptr)
+    {
+        interactionId.setValue (newInteractionId, undoManager);
+        return *this;
+    }
 
+    //==============================================================================
     /** Depending on your object's state, interactibility could be
         selectively enabled and disabled here, and any other state might want
         to be considered or changed.
@@ -225,18 +292,24 @@ public:
     /** */
     virtual String createInventoryIcon() const { return {}; }
 
+    //==============================================================================
     CREATE_INLINE_CLASS_IDENTIFIER (position)
-    CREATE_INLINE_CLASS_IDENTIFIER (isInteractable)
+    CREATE_INLINE_CLASS_IDENTIFIER (interactionId)
 
 private:
+    //==============================================================================
     CachedValue<Point<int>> position;
-    CachedValue<bool> interactable;
+    CachedValue<String> interactionId;
 
+    //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WorldObject)
 };
 
 //==============================================================================
-/** Represents a type of StatusCondition to be used on WorldEntities. */
+/** Represents a type of StatusCondition to be used on Weapons and WorldEntities.
+
+    @see Weapon, WeaponDefinitions, WorldEntities
+*/
 class StatusCondition final
 {
 public:
@@ -324,6 +397,28 @@ private:
     int flags = 0;
 };
 
+/** @returns */
+inline [[nodiscard]] String toString (StatusCondition statusCondition)
+{
+    if (statusCondition.isNormal())
+        return NEEDS_TRANS ("Normal");
+
+    StringArray s;
+
+    if (statusCondition.isBurned())         s.add (TRANS ("Burned"));
+    if (statusCondition.isFrozen())         s.add (TRANS ("Frozen"));
+    if (statusCondition.isParalysed())      s.add (TRANS ("Paralysed"));
+    if (statusCondition.isPoisoned())       s.add (TRANS ("Poisoned"));
+    if (statusCondition.isAsleep())         s.add (TRANS ("Asleep"));
+    if (statusCondition.isDrowsy())         s.add (TRANS ("Drowsy"));
+    if (statusCondition.isFrostbitten())    s.add (TRANS ("Frostbitten"));
+    if (statusCondition.isBound())          s.add (TRANS ("Bound"));
+    if (statusCondition.isCursed())         s.add (TRANS ("Cursed"));
+
+    return s.joinIntoString (", ");
+}
+
+//==============================================================================
 /** */
 enum class CardinalDirection
 {
@@ -335,7 +430,7 @@ enum class CardinalDirection
 };
 
 /** */
-inline double toDegrees (CardinalDirection cd) noexcept
+inline [[nodiscard]] double toDegrees (CardinalDirection cd) noexcept
 {
     switch (cd)
     {
@@ -354,7 +449,7 @@ inline double toDegrees (CardinalDirection cd) noexcept
 }
 
 /** @returns */
-inline String toString (CardinalDirection cd)
+inline [[nodiscard]] String toString (CardinalDirection cd)
 {
     switch (cd)
     {
@@ -371,11 +466,53 @@ inline String toString (CardinalDirection cd)
 }
 
 /** */
-inline double snapAngleToWorld (double angleDegrees) noexcept
+inline [[nodiscard]] double snapAngleToWorld (double angleDegrees) noexcept
 {
     return std::round (angleDegrees / 90.0) * 90.0;
 }
 
+//==============================================================================
+/** */
+enum class Material
+{
+    tile,
+    dirt,
+    grass,
+    brick,
+    glass,
+    wood,
+    metal,
+    vinyl,
+    stone,
+    marble,
+    concrete,
+    plastic
+};
+
+/** @returns */
+inline [[nodiscard]] String toString (Material materialType, bool asAdjective = false)
+{
+    switch (materialType)
+    {
+        case Material::tile:        { return asAdjective ? NEEDS_TRANS ("tiled")    : NEEDS_TRANS ("tile"); }
+        case Material::brick:       { return asAdjective ? NEEDS_TRANS ("brick")    : NEEDS_TRANS ("brick"); }
+        case Material::glass:       { return asAdjective ? NEEDS_TRANS ("glass")    : NEEDS_TRANS ("glass"); }
+        case Material::wood:        { return asAdjective ? NEEDS_TRANS ("wooden")   : NEEDS_TRANS ("wood"); }
+        case Material::metal:       { return asAdjective ? NEEDS_TRANS ("metallic") : NEEDS_TRANS ("metal"); }
+        case Material::vinyl:       { return asAdjective ? NEEDS_TRANS ("vinyl")    : NEEDS_TRANS ("vinyl"); }
+        case Material::stone:       { return asAdjective ? NEEDS_TRANS ("stone")    : NEEDS_TRANS ("stone"); }
+        case Material::marble:      { return asAdjective ? NEEDS_TRANS ("marbled")  : NEEDS_TRANS ("marble"); }
+        case Material::concrete:    { return asAdjective ? NEEDS_TRANS ("concrete") : NEEDS_TRANS ("concrete"); }
+        case Material::plastic:     { return asAdjective ? NEEDS_TRANS ("plastic")  : NEEDS_TRANS ("plastic"); }
+
+        default: break;
+    };
+
+    jassertfalse;
+    return {};
+}
+
+//==============================================================================
 /** */
 enum class MoveType
 {
@@ -386,16 +523,16 @@ enum class MoveType
     fire
 };
 
-/** @returns */
-inline String toString (MoveType moveType)
+/** */
+inline [[nodiscard]] String toString (MoveType moveType)
 {
     switch (moveType)
     {
-        case MoveType::normal:  return TRANS ("Normal");
-        case MoveType::earth:   return TRANS ("Earth");
-        case MoveType::wind:    return TRANS ("Wind");
-        case MoveType::water:   return TRANS ("Water");
-        case MoveType::fire:    return TRANS ("Fire");
+        case MoveType::normal:  return NEEDS_TRANS ("Normal");
+        case MoveType::earth:   return NEEDS_TRANS ("Earth");
+        case MoveType::wind:    return NEEDS_TRANS ("Wind");
+        case MoveType::water:   return NEEDS_TRANS ("Water");
+        case MoveType::fire:    return NEEDS_TRANS ("Fire");
 
         default: break;
     };

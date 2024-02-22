@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="PXnO37" name="The Dark Fable" projectType="guiapp" useAppConfig="1"
-              addUsingNamespaceToJuceHeader="1" jucerFormatVersion="1" cppLanguageStandard="latest"
-              maxBinaryFileSize="20971520" companyName="jrlanglois" companyCopyright="Jo&#235;l R. Langlois"
-              companyEmail="joel.r.langlois@gmail.com" companyWebsite="www.jrlanglois.io">
+<JUCERPROJECT id="PXnO37" name="The Dark Fable" projectType="guiapp" jucerFormatVersion="1"
+              cppLanguageStandard="latest" maxBinaryFileSize="20971520" companyName="jrlanglois"
+              companyCopyright="Jo&#235;l R. Langlois" companyEmail="joel.r.langlois@gmail.com"
+              companyWebsite="www.jrlanglois.io">
   <MAINGROUP id="A3BO0M" name="The Dark Fable">
-    <GROUP id="{C11AB024-FD4B-FFE0-7324-6146C0A40185}" name="Source">
-      <FILE id="tI5vmN" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-      <FILE id="ND47xe" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
-      <FILE id="cOeal9" name="MainComponent.cpp" compile="1" resource="0"
-            file="Source/MainComponent.cpp"/>
+    <GROUP id="{F214EAF7-1345-C69E-458D-9CFFF68557A9}" name="content">
+      <FILE id="hKpDLq" name="enemies.json" compile="0" resource="1" file="content/enemies.json"/>
+      <FILE id="Z5ypC3" name="inanimateObjects.json" compile="0" resource="1"
+            file="content/inanimateObjects.json"/>
+      <FILE id="Tufhgp" name="npcs.json" compile="0" resource="1" file="content/npcs.json"/>
+      <FILE id="QhaPyy" name="textTriggers.json" compile="0" resource="1"
+            file="content/textTriggers.json"/>
+      <FILE id="kHYXoN" name="weapons.json" compile="0" resource="1" file="content/weapons.json"/>
+    </GROUP>
+    <GROUP id="{5796C3FE-CDD5-296A-F078-8921C178290A}" name="source">
+      <FILE id="znPmrX" name="Main.cpp" compile="1" resource="0" file="source/Main.cpp"/>
+      <FILE id="dWKiQq" name="MainComponent.cpp" compile="1" resource="0"
+            file="source/MainComponent.cpp"/>
+      <FILE id="fupFCM" name="MainComponent.h" compile="0" resource="0" file="source/MainComponent.h"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" SQUAREPINE_LOG_GOOGLE_ANALYTICS="1"
@@ -49,7 +58,7 @@
         <MODULEPATH id="squarepine_opus" path="../../../SquarePine"/>
       </MODULEPATHS>
     </VS2022>
-    <XCODE_IPHONE targetFolder="builds/iOS">
+    <XCODE_IPHONE targetFolder="builds/iOS" iosContentSharing="0">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" recommendedWarnings="LLVM"/>
         <CONFIGURATION isDebug="0" name="Release" recommendedWarnings="LLVM"/>
@@ -142,7 +151,10 @@
         <MODULEPATH id="squarepine_opus" path="../../../SquarePine"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <ANDROIDSTUDIO targetFolder="builds/android" androidVibratePermissionNeeded="1">
+    <ANDROIDSTUDIO targetFolder="builds/android" androidVibratePermissionNeeded="1"
+                   androidReadMediaVideoPermission="0" androidReadMediaImagesPermission="0"
+                   androidReadMediaAudioPermission="0" androidInternetNeeded="0"
+                   androidPushNotifications="0">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" recommendedWarnings="LLVM"/>
         <CONFIGURATION isDebug="0" name="Release" recommendedWarnings="LLVM" linkTimeOptimisation="1"/>

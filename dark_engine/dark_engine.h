@@ -64,9 +64,13 @@ namespace darkEngine
 {
     #include "model/dark_engine_Entities.h"
     #include "model/dark_engine_Screen.h"
-    #include "contents/dark_engine_Moves.h"
-    #include "contents/dark_engine_Weapons.h"
-    #include "contents/dark_engine_Enemies.h"
+
+    #include "world/dark_engine_Enemies.h"
+    #include "world/dark_engine_Moves.h"
+    #include "world/dark_engine_Weapons.h"
+    #include "world/dark_engine_NPCs.h"
+    #include "world/dark_engine_InanimateObjects.h"
+
     #include "mechanics/dark_engine_GameEngine.h"
     #include "mechanics/dark_engine_GameProcessor.h"
 }
