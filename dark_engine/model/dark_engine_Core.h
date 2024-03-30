@@ -1,21 +1,26 @@
-/** */
+//==============================================================================
+/** A generic, low-level object that can exist within a GameMap.
+
+    @see WorldEntity, Weapon, FightingMove, FightableEntity,
+         Player, EngineTile, GameMap
+*/
 class EngineObject : public Identifiable
 {
 public:
     /** */
     EngineObject (const Identifier& id, UndoManager* undoManager = nullptr) :
         Identifiable (id),
-        state (id),
-        name (state, nameId, undoManager),
-        description (state, descriptionId, undoManager)
+        state (id)
     {
+        setupPropAndCache (undoManager);
     }
 
     /** */
-    EngineObject (const ValueTree& startState, UndoManager* undoManager = nullptr) :
-        EngineObject (startState.getType(), undoManager)
+    EngineObject (const ValueTree& existingState, UndoManager* undoManager = nullptr) :
+        EngineObject (existingState.getType(), undoManager)
     {
-        state = startState;
+        state = existingState;
+        setupPropAndCache (undoManager);
     }
 
     //==============================================================================
@@ -27,7 +32,7 @@ public:
     }
 
     /** @returns */
-    [[nodiscard]] String getName() const noexcept { return TRANS (name.get()); }
+    [[nodiscard]] String getName() const noexcept { return name.get(); }
 
     /** Untranslated. */
     EngineObject& setDescription (const String& newDescription, UndoManager* undoManager = nullptr)
@@ -37,7 +42,7 @@ public:
     }
 
     /** @returns */
-    [[nodiscard]] String getDescription() const noexcept { return TRANS (description.get()); }
+    [[nodiscard]] String getDescription() const noexcept { return description.get(); }
 
     //==============================================================================
     /** @returns the state of this EngineObject. */
@@ -210,17 +215,30 @@ public:
         return Result::fail (TRANS ("Failed to load!"));
     }
 
-    //==============================================================================
-    CREATE_INLINE_CLASS_IDENTIFIER (name)
-    CREATE_INLINE_CLASS_IDENTIFIER (description)
-
 protected:
     //==============================================================================
     ValueTree state;
 
+    /** @returns */
+    template<typename Type>
+    ValueTree& setupPropAndCache (CachedValue<Type>& cv, const Identifier& id,
+                                  const Type& value, UndoManager* undoManager)
+    {
+        setProperty (id, juce::VariantConverter<Type>::toVar (value), undoManager);
+        cv.referTo (state, id, undoManager);
+        return state;
+    }
+
 private:
     //==============================================================================
     CachedValue<String> name, description;
+
+    //==============================================================================
+    void setupPropAndCache (UndoManager* undoManager)
+    {
+        setupPropAndCache (name, nameId, {}, undoManager);
+        setupPropAndCache (description, descriptionId, {}, undoManager);
+    }
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EngineObject)
@@ -235,35 +253,53 @@ public:
     WorldObject (const Identifier& id,
                  StringRef interactionIdToUse = {},
                  UndoManager* undoManager = nullptr) :
-        EngineObject (id, undoManager),
-        position (state, positionId, undoManager, {}),
-        interactionId (state, interactionIdId, undoManager, interactionIdToUse)
+        EngineObject (id, undoManager)
     {
+        setupPropAndCache (undoManager);
+        setInteractionId (interactionIdToUse, undoManager);
     }
 
     /** */
-    WorldObject (const ValueTree& startState, UndoManager* undoManager = nullptr) :
-        EngineObject (startState, undoManager),
-        position (state, positionId, undoManager, {}),
-        interactionId (state, interactionIdId, undoManager)
+    WorldObject (const ValueTree& existingState, UndoManager* undoManager = nullptr) :
+        EngineObject (existingState, undoManager)
     {
+        setupPropAndCache (undoManager);
     }
 
     //==============================================================================
     /** */
-    WorldObject& setPosition (Point<int> newPosition, UndoManager* undoManager = nullptr)
+    WorldObject& setDimensions (Rectangle<int> newDimensions, UndoManager* undoManager = nullptr)
     {
-        position.setValue (newPosition, undoManager);
+        dimensions.setValue (newDimensions, undoManager);
         return *this;
     }
+
+    /** */
+    WorldObject& setPosition (Point<int> newPosition, UndoManager* undoManager = nullptr)
+    {
+        return setDimensions (getDimensions().withPosition (newPosition), undoManager);
+    }
+
     /** */
     WorldObject& setPosition (int x, int y, UndoManager* undoManager = nullptr)
     {
-        setPosition ({ x, y }, undoManager);
-        return *this;
+        return setPosition ({ x, y }, undoManager);
     }
+
+    /** */
+    WorldObject& setSize (int width, int height, UndoManager* undoManager = nullptr)
+    {
+        return setDimensions (getDimensions().withSize (width, height), undoManager);
+    }
+
     /** @returns */
-    [[nodiscard]] Point<int> getPosition() const noexcept   { return position.get(); }
+    [[nodiscard]] Rectangle<int> getDimensions() const noexcept { return dimensions.get(); }
+    /** @returns */
+    [[nodiscard]] Point<int> getPosition() const noexcept       { return getDimensions().getPosition(); }
+    /** @returns */
+    [[nodiscard]] int getWidth() const noexcept                 { return getDimensions().getWidth(); }
+    /** @returns */
+    [[nodiscard]] int getHeight() const noexcept                { return getDimensions().getHeight(); }
 
     //==============================================================================
     /** @returns */
@@ -271,9 +307,29 @@ public:
     /** @returns */
     [[nodiscard]] bool isInteractable() const noexcept      { return getInteractionId().isNotEmpty(); }
     /** */
-    WorldObject& setInteractableId (StringRef newInteractionId, UndoManager* undoManager = nullptr)
+    WorldObject& setInteractionId (StringRef newInteractionId, UndoManager* undoManager = nullptr)
     {
         interactionId.setValue (newInteractionId, undoManager);
+        return *this;
+    }
+
+    //==============================================================================
+    /** @returns */
+    [[nodiscard]] Colour getLightColour() const noexcept    { return lightColour.get(); }
+    /** @returns */
+    [[nodiscard]] bool castsLight() const noexcept          { return ! getLightColour().isTransparent(); }
+    /** @returns */
+    [[nodiscard]] int getLightRadius() const noexcept       { return lightRadius.get(); }
+    /** */
+    WorldObject& setLightColour (Colour newLightColour, UndoManager* undoManager = nullptr)
+    {
+        lightColour.setValue (newLightColour, undoManager);
+        return *this;
+    }
+    /** */
+    WorldObject& setLightRadius (int newLightRadius, UndoManager* undoManager = nullptr)
+    {
+        lightRadius.setValue (newLightRadius, undoManager);
         return *this;
     }
 
@@ -285,21 +341,55 @@ public:
         This will be called prior to recreating icons.
     */
     virtual void update() { }
-    /** */
-    virtual String createMapIcon() const { return {}; }
-    /** */
-    virtual String createScreenIcon() const { return {}; }
-    /** */
-    virtual String createInventoryIcon() const { return {}; }
 
-    //==============================================================================
-    CREATE_INLINE_CLASS_IDENTIFIER (position)
-    CREATE_INLINE_CLASS_IDENTIFIER (interactionId)
+    /** */
+    String getMapIcon() const       { return mapIcon.get(); }
+    /** */
+    String getScreenIcon() const    { return screenIcon.get(); }
+    /** */
+    String getInventoryIcon() const { return inventoryIcon.get(); }
+
+    /** */
+    WorldObject& setMapIcon (StringRef newIcon, UndoManager* undoManager = nullptr)
+    {
+        mapIcon.setValue (newIcon, undoManager);
+        return *this;
+    }
+
+    /** */
+    WorldObject& setScreenIcon (StringRef newIcon, UndoManager* undoManager = nullptr)
+    {
+        screenIcon.setValue (newIcon, undoManager);
+        return *this; 
+    }
+
+    /** */
+    WorldObject& setInventoryIcon (StringRef newIcon, UndoManager* undoManager = nullptr)
+    {
+        inventoryIcon.setValue (newIcon, undoManager);
+        return *this;
+    }
 
 private:
     //==============================================================================
-    CachedValue<Point<int>> position;
-    CachedValue<String> interactionId;
+    CachedValue<Rectangle<int>> dimensions;
+    CachedValue<String> interactionId, mapIcon, screenIcon, inventoryIcon;
+    CachedValue<Colour> lightColour;
+    CachedValue<int> lightRadius;
+
+    //==============================================================================
+    void setupPropAndCache (UndoManager* undoManager)
+    {
+        EngineObject::setupPropAndCache (dimensions, dimensionsId, {}, undoManager);
+        EngineObject::setupPropAndCache (interactionId, interactionIdId, {}, undoManager);
+        EngineObject::setupPropAndCache (mapIcon, mapIconId, {}, undoManager);
+        EngineObject::setupPropAndCache (screenIcon, screenIconId, {}, undoManager);
+        EngineObject::setupPropAndCache (inventoryIcon, inventoryIconId, {}, undoManager);
+        EngineObject::setupPropAndCache (lightColour, lightColourId, {}, undoManager);
+        EngineObject::setupPropAndCache (lightRadius, lightRadiusId, {}, undoManager);
+
+        setSize (1, 1, undoManager);
+    }
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WorldObject)
@@ -320,6 +410,12 @@ public:
     /** Creates a StatusCondition object using a combination of flags from the Flags enum. */
     constexpr StatusCondition (int statusFlags) noexcept : flags (statusFlags) { }
 
+    /** Creates a StatusCondition object using a bitset. */
+    constexpr StatusCondition (const std::bitset<16>& bits) noexcept :
+        StatusCondition ((int) bits.to_ulong())
+    {
+    }
+
     /** Creates a copy of another StatusCondition object. */
     StatusCondition (const StatusCondition&) noexcept = default;
 
@@ -333,8 +429,14 @@ public:
     [[nodiscard]] constexpr bool operator!= (const StatusCondition& other) const noexcept   { return ! operator== (other); }
 
     //==============================================================================
-    /** Returns the raw flags that are set for this Justification object. */
+    /** Returns the raw flags that are set for this StatusCondition object. */
     [[nodiscard]] constexpr int getFlags() const noexcept                                   { return flags; }
+
+    /** Returns the raw flags that are set for this StatusCondition object as a bitset. */
+    [[nodiscard]] std::bitset<16> toBitset() const noexcept
+    {
+        return std::bitset<16> ((uint64_t) flags);
+    }
 
     /** Tests a set of flags for this object.
         @returns true if any of the flags passed in are set on this object.
@@ -373,23 +475,26 @@ public:
     enum Flags
     {
         /** */
-        burned      = 1 << 1,
+        burned      = 1 << 0,
         /** */
-        frozen      = 1 << 2,
+        frozen      = 1 << 1,
         /** */
-        paralysed   = 1 << 3,
+        paralysed   = 1 << 2,
         /** */
-        poisoned    = 1 << 4,
+        poisoned    = 1 << 3,
         /** */
-        asleep      = 1 << 5,
+        asleep      = 1 << 4,
         /** */
-        drowsy      = 1 << 6,
+        drowsy      = 1 << 5,
         /** */
-        frostbitten = 1 << 7,
+        frostbitten = 1 << 6,
         /** */
-        bound       = 1 << 8,
+        bound       = 1 << 7,
         /** */
-        cursed      = 1 << 9
+        cursed      = 1 << 8,
+
+        /** */
+        numFlags    = 9
     };
 
 private:
@@ -398,10 +503,25 @@ private:
 };
 
 /** @returns */
-inline [[nodiscard]] String toString (StatusCondition statusCondition)
+inline [[nodiscard]] String toString (StatusCondition statusCondition, bool asArray = false)
 {
     if (statusCondition.isNormal())
-        return NEEDS_TRANS ("Normal");
+        return TRANS ("Normal");
+
+    if (! asArray)
+    {
+        if (statusCondition.isBurned())         return TRANS ("Burned");
+        if (statusCondition.isFrozen())         return TRANS ("Frozen");
+        if (statusCondition.isParalysed())      return TRANS ("Paralysed");
+        if (statusCondition.isPoisoned())       return TRANS ("Poisoned");
+        if (statusCondition.isAsleep())         return TRANS ("Asleep");
+        if (statusCondition.isDrowsy())         return TRANS ("Drowsy");
+        if (statusCondition.isFrostbitten())    return TRANS ("Frostbitten");
+        if (statusCondition.isBound())          return TRANS ("Bound");
+        if (statusCondition.isCursed())         return TRANS ("Cursed");
+
+        jassertfalse; // ???
+    }
 
     StringArray s;
 
@@ -423,6 +543,7 @@ inline [[nodiscard]] String toString (StatusCondition statusCondition)
 enum class CardinalDirection
 {
     notApplicable,
+    omnidirectional,
     north,
     east,
     south,
@@ -434,11 +555,12 @@ inline [[nodiscard]] double toDegrees (CardinalDirection cd) noexcept
 {
     switch (cd)
     {
-        case CardinalDirection::notApplicable:  return 0.0;
-        case CardinalDirection::north:          return 0.0;
-        case CardinalDirection::east:           return 90.0;
-        case CardinalDirection::south:          return 180.0;
-        case CardinalDirection::west:           return 270.0;
+        case CardinalDirection::notApplicable:      return 0.0;
+        case CardinalDirection::omnidirectional:    return 0.0;
+        case CardinalDirection::north:              return 0.0;
+        case CardinalDirection::east:               return 90.0;
+        case CardinalDirection::south:              return 180.0;
+        case CardinalDirection::west:               return 270.0;
 
         default:
             jassertfalse;
@@ -453,11 +575,12 @@ inline [[nodiscard]] String toString (CardinalDirection cd)
 {
     switch (cd)
     {
-        case CardinalDirection::notApplicable:  return TRANS ("(N/A)");
-        case CardinalDirection::north:          return TRANS ("north");
-        case CardinalDirection::east:           return TRANS ("east");
-        case CardinalDirection::south:          return TRANS ("south");
-        case CardinalDirection::west:           return TRANS ("west");
+        case CardinalDirection::notApplicable:      return TRANS ("(N/A)");
+        case CardinalDirection::omnidirectional:    return TRANS ("omni");
+        case CardinalDirection::north:              return TRANS ("north");
+        case CardinalDirection::east:               return TRANS ("east");
+        case CardinalDirection::south:              return TRANS ("south");
+        case CardinalDirection::west:               return TRANS ("west");
         default: break;
     };
 
@@ -465,10 +588,12 @@ inline [[nodiscard]] String toString (CardinalDirection cd)
     return {};
 }
 
-/** */
-inline [[nodiscard]] double snapAngleToWorld (double angleDegrees) noexcept
+/** @returns */
+template<typename FloatType>
+inline [[nodiscard]] FloatType snapAngleToWorld (FloatType angleDegrees) noexcept
 {
-    return std::round (angleDegrees / 90.0) * 90.0;
+    constexpr auto ninetyDegs = static_cast<FloatType> (90);
+    return std::round (angleDegrees / ninetyDegs) * ninetyDegs;
 }
 
 //==============================================================================
@@ -486,7 +611,12 @@ enum class Material
     stone,
     marble,
     concrete,
-    plastic
+    cement,
+    plastic,
+    ice,
+    ooze,
+
+    numMaterials = ooze + 1
 };
 
 /** @returns */
@@ -494,16 +624,21 @@ inline [[nodiscard]] String toString (Material materialType, bool asAdjective = 
 {
     switch (materialType)
     {
-        case Material::tile:        { return asAdjective ? NEEDS_TRANS ("tiled")    : NEEDS_TRANS ("tile"); }
-        case Material::brick:       { return asAdjective ? NEEDS_TRANS ("brick")    : NEEDS_TRANS ("brick"); }
-        case Material::glass:       { return asAdjective ? NEEDS_TRANS ("glass")    : NEEDS_TRANS ("glass"); }
-        case Material::wood:        { return asAdjective ? NEEDS_TRANS ("wooden")   : NEEDS_TRANS ("wood"); }
-        case Material::metal:       { return asAdjective ? NEEDS_TRANS ("metallic") : NEEDS_TRANS ("metal"); }
-        case Material::vinyl:       { return asAdjective ? NEEDS_TRANS ("vinyl")    : NEEDS_TRANS ("vinyl"); }
-        case Material::stone:       { return asAdjective ? NEEDS_TRANS ("stone")    : NEEDS_TRANS ("stone"); }
-        case Material::marble:      { return asAdjective ? NEEDS_TRANS ("marbled")  : NEEDS_TRANS ("marble"); }
-        case Material::concrete:    { return asAdjective ? NEEDS_TRANS ("concrete") : NEEDS_TRANS ("concrete"); }
-        case Material::plastic:     { return asAdjective ? NEEDS_TRANS ("plastic")  : NEEDS_TRANS ("plastic"); }
+        case Material::tile:        { return asAdjective ? TRANS ("tiled")      : TRANS ("tile"); }
+        case Material::dirt:        { return asAdjective ? TRANS ("dirty")      : TRANS ("dirt"); }
+        case Material::grass:       { return asAdjective ? TRANS ("grassy")      : TRANS ("grass"); }
+        case Material::brick:       { return asAdjective ? TRANS ("brick")      : TRANS ("brick"); }
+        case Material::glass:       { return asAdjective ? TRANS ("glass")      : TRANS ("glass"); }
+        case Material::wood:        { return asAdjective ? TRANS ("wooden")     : TRANS ("wood"); }
+        case Material::metal:       { return asAdjective ? TRANS ("metallic")   : TRANS ("metal"); }
+        case Material::vinyl:       { return asAdjective ? TRANS ("vinyl")      : TRANS ("vinyl"); }
+        case Material::stone:       { return asAdjective ? TRANS ("stone")      : TRANS ("stone"); }
+        case Material::marble:      { return asAdjective ? TRANS ("marbled")    : TRANS ("marble"); }
+        case Material::concrete:    { return asAdjective ? TRANS ("concrete")   : TRANS ("concrete"); }
+        case Material::cement:      { return asAdjective ? TRANS ("cemented")   : TRANS ("cement"); }
+        case Material::plastic:     { return asAdjective ? TRANS ("plastic")    : TRANS ("plastic"); }
+        case Material::ice:         { return asAdjective ? TRANS ("iced")       : TRANS ("ice"); }
+        case Material::ooze:        { return asAdjective ? TRANS ("ooze")       : TRANS ("ooze"); }
 
         default: break;
     };
@@ -520,7 +655,13 @@ enum class MoveType
     earth,
     wind,
     water,
-    fire
+    ice,
+    fire,
+    electric,
+    plasma,
+    poison,
+
+    numMoveTypes = poison + 1
 };
 
 /** */
@@ -528,11 +669,182 @@ inline [[nodiscard]] String toString (MoveType moveType)
 {
     switch (moveType)
     {
-        case MoveType::normal:  return NEEDS_TRANS ("Normal");
-        case MoveType::earth:   return NEEDS_TRANS ("Earth");
-        case MoveType::wind:    return NEEDS_TRANS ("Wind");
-        case MoveType::water:   return NEEDS_TRANS ("Water");
-        case MoveType::fire:    return NEEDS_TRANS ("Fire");
+        case MoveType::normal:      return TRANS ("Normal");
+        case MoveType::earth:       return TRANS ("Earth");
+        case MoveType::wind:        return TRANS ("Wind");
+        case MoveType::water:       return TRANS ("Water");
+        case MoveType::ice:         return TRANS ("Ice");
+        case MoveType::fire:        return TRANS ("Fire");
+        case MoveType::electric:    return TRANS ("Electric");
+        case MoveType::plasma:      return TRANS ("Plasma");
+        case MoveType::poison:      return TRANS ("Poison");
+
+        default: break;
+    };
+
+    jassertfalse;
+    return {};
+}
+
+//==============================================================================
+/** Represents a type of difficulty to be used on WorldEntity derivatives.
+
+    @see WorldEntity
+*/
+class Difficulty final
+{
+public:
+    //==============================================================================
+    /** Creates a Difficulty that's 'any', applying to all difficulties the same. */
+    constexpr Difficulty() noexcept = default;
+
+    /** Creates a Difficulty object using a combination of flags from the Flags enum. */
+    constexpr Difficulty (int statusFlags) noexcept :
+        flags (statusFlags)
+    {
+        jassert (flags >= 0);
+        jassert (appliesToAll() || appliesToEasy() || appliesToMedium() || appliesToHard());
+    }
+
+    /** Creates a Difficulty object using a bitset. */
+    constexpr Difficulty (const std::bitset<16>& bits) noexcept :
+        Difficulty ((int) bits.to_ulong())
+    {
+    }
+
+    /** Creates a copy of another Difficulty object. */
+    Difficulty (const Difficulty&) noexcept = default;
+
+    //==============================================================================
+    /** Copies another Difficulty object. */
+    Difficulty& operator= (const Difficulty&) noexcept = default;
+
+    /** @returns */
+    [[nodiscard]] constexpr bool operator== (const Difficulty& other) const noexcept    { return flags == other.flags; }
+    /** @returns */
+    [[nodiscard]] constexpr bool operator!= (const Difficulty& other) const noexcept    { return ! operator== (other); }
+
+    //==============================================================================
+    /** Returns the raw flags that are set for this Difficulty object. */
+    [[nodiscard]] constexpr int getFlags() const noexcept                               { return flags; }
+
+    /** Returns the raw flags that are set for this Difficulty object as a bitset. */
+    [[nodiscard]] std::bitset<16> toBitset() const noexcept
+    {
+        return std::bitset<16> ((uint64_t) flags);
+    }
+
+    /** Tests a set of flags for this object.
+        @returns true if any of the flags passed in are set on this object.
+    */
+    [[nodiscard]] constexpr bool testFlags (int flagsToTest) const noexcept             { return (flags & flagsToTest) != 0; }
+
+    /** @returns */
+    [[nodiscard]] constexpr bool appliesToAll() const noexcept                          { return flags == 0; }
+    /** @returns */
+    [[nodiscard]] constexpr bool appliesToEasy() const noexcept                         { return testFlags (easy); }
+    /** @returns */
+    [[nodiscard]] constexpr bool appliesToMedium() const noexcept                       { return testFlags (medium); }
+    /** @returns */
+    [[nodiscard]] constexpr bool appliesToHard() const noexcept                         { return testFlags (hard); }
+
+    /** @returns */
+    [[nodiscard]] constexpr bool appliesToMultipleDifficulties() const noexcept
+    {
+        return appliesToAll() || std::popcount (static_cast<uint32> (flags)) > 1;
+    }
+
+    //==============================================================================
+    /** Flag values that can be combined and used in the constructor. */
+    enum Flags
+    {
+        easy        = 1 << 0,   //
+        medium      = 1 << 1,   //
+        hard        = 1 << 2,   //
+        numFlags    = 3         //
+    };
+
+private:
+    //==============================================================================
+    int flags = 0;
+};
+
+/** @returns */
+inline [[nodiscard]] String toString (Difficulty difficulty, bool asArray = false)
+{
+    if (difficulty.appliesToAll())
+        return TRANS ("Any");
+
+    if (! asArray)
+    {
+        if (difficulty.appliesToEasy())     return TRANS ("Easy");
+        if (difficulty.appliesToMedium())   return TRANS ("Medium");
+        if (difficulty.appliesToHard())     return TRANS ("Hard");
+
+        jassertfalse; // ???
+    }
+
+    StringArray s;
+
+    if (difficulty.appliesToEasy())     s.add (TRANS ("Easy"));
+    if (difficulty.appliesToMedium())   s.add (TRANS ("Medium"));
+    if (difficulty.appliesToHard())     s.add (TRANS ("Hard"));
+
+    jassert (! s.isEmpty());
+
+    return s.joinIntoString (", ");
+}
+
+//==============================================================================
+/** */
+enum class DoorLockState
+{
+    unlocked,
+    needsKey,
+    needsSpell,
+    impassable,
+
+    numDoorLockStates = impassable + 1
+};
+
+/** @returns */
+inline [[nodiscard]] String toString (DoorLockState doorLockState)
+{
+    switch (doorLockState)
+    {
+        case DoorLockState::unlocked:   return TRANS ("Unlocked");
+        case DoorLockState::needsKey:   return TRANS ("Needs Key");
+        case DoorLockState::needsSpell: return TRANS ("Needs Spell");
+        case DoorLockState::impassable: return TRANS ("Impassable");
+
+        default: break;
+    };
+
+    jassertfalse;
+    return {};
+}
+
+//==============================================================================
+/** */
+enum class WindowTileType
+{
+    permanentlyOpen,
+    permanentlyClosed,
+    openable,
+    openableWithUnlockableId,
+
+    numWindowTileTypes = openableWithUnlockableId + 1
+};
+
+/** @returns */
+inline [[nodiscard]] String toString (WindowTileType windowTileType)
+{
+    switch (windowTileType)
+    {
+        case WindowTileType::permanentlyOpen:           return TRANS ("Stuck Open");
+        case WindowTileType::permanentlyClosed:         return TRANS ("Stuck Closed");
+        case WindowTileType::openable:                  return TRANS ("Openable/Closeable");
+        case WindowTileType::openableWithUnlockableId:  return TRANS ("Openable (with ID)");
 
         default: break;
     };

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <JuceHeader.h>
+#include "DarkFableLookAndFeel.h"
 
 using namespace darkEngine;
 
@@ -103,6 +103,22 @@ private:
 };
 
 //==============================================================================
+class ObjectEditor : public Component
+{
+public:
+    ObjectEditor ()
+    {
+    }
+
+    ~ObjectEditor() override
+    {
+    }
+
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ObjectEditor)
+};
+
+//==============================================================================
 class MainComponent final : public Component,
                             public ValueTree::Listener,
                             public AsyncUpdater
@@ -122,10 +138,12 @@ private:
     //==============================================================================
     UndoManager undoManager;
     GameProcessor gameProcessor;
-    GameMap gameMap { &undoManager };
-    ValueTree gameMapState { gameMap.getState() };
+    GameMap gameMap;
+    ValueTree worldState { gameMap.getWorldState() };
     GameMapEditorComponent editor { gameMap };
     Viewport viewport;
+
+    ValueTreeEditor worldStateEditor { worldState };
 
     TabbedComponent tabbedComp { TabbedButtonBar::TabsAtTop };
 

@@ -6,15 +6,119 @@
               companyWebsite="www.jrlanglois.io">
   <MAINGROUP id="A3BO0M" name="The Dark Fable">
     <GROUP id="{F214EAF7-1345-C69E-458D-9CFFF68557A9}" name="content">
-      <FILE id="hKpDLq" name="enemies.json" compile="0" resource="1" file="content/enemies.json"/>
-      <FILE id="Z5ypC3" name="inanimateObjects.json" compile="0" resource="1"
-            file="content/inanimateObjects.json"/>
-      <FILE id="Tufhgp" name="npcs.json" compile="0" resource="1" file="content/npcs.json"/>
-      <FILE id="QhaPyy" name="textTriggers.json" compile="0" resource="1"
-            file="content/textTriggers.json"/>
-      <FILE id="kHYXoN" name="weapons.json" compile="0" resource="1" file="content/weapons.json"/>
+      <GROUP id="{FB48A397-1518-314C-340F-E67F4EC60362}" name="fonts">
+        <GROUP id="{7D52CECD-5171-8C37-92EE-1C1D5B0C9FB5}" name="Kode_Mono">
+          <GROUP id="{5557E527-4A96-B6E8-0AD8-B4F3BF6C4B2F}" name="static">
+            <FILE id="r00nnc" name="KodeMono-Bold.ttf" compile="0" resource="1"
+                  file="content/fonts/Kode_Mono/static/KodeMono-Bold.ttf"/>
+            <FILE id="UJNUIJ" name="KodeMono-Medium.ttf" compile="0" resource="1"
+                  file="content/fonts/Kode_Mono/static/KodeMono-Medium.ttf"/>
+            <FILE id="eCyIkp" name="KodeMono-Regular.ttf" compile="0" resource="1"
+                  file="content/fonts/Kode_Mono/static/KodeMono-Regular.ttf"/>
+            <FILE id="CeYzK9" name="KodeMono-SemiBold.ttf" compile="0" resource="1"
+                  file="content/fonts/Kode_Mono/static/KodeMono-SemiBold.ttf"/>
+          </GROUP>
+          <FILE id="D1Nzd3" name="KodeMono-VariableFont_wght.ttf" compile="0"
+                resource="1" file="content/fonts/Kode_Mono/KodeMono-VariableFont_wght.ttf"/>
+          <FILE id="lo6tPq" name="OFL.txt" compile="0" resource="1" file="content/fonts/Kode_Mono/OFL.txt"/>
+          <FILE id="DsxpyJ" name="README.txt" compile="0" resource="1" file="content/fonts/Kode_Mono/README.txt"/>
+        </GROUP>
+        <GROUP id="{D2F96C1C-6C81-E7A3-7FE2-6F2A221205A4}" name="Noto_Sans_Mono">
+          <GROUP id="{46C69525-B40A-4016-9F93-C97AC4F0526E}" name="static">
+            <FILE id="g5en1X" name="NotoSansMono-Black.ttf" compile="0" resource="1"
+                  file="content/fonts/Noto_Sans_Mono/static/NotoSansMono-Black.ttf"/>
+            <FILE id="tbd7nV" name="NotoSansMono-Bold.ttf" compile="0" resource="1"
+                  file="content/fonts/Noto_Sans_Mono/static/NotoSansMono-Bold.ttf"/>
+            <FILE id="wYhJz2" name="NotoSansMono-ExtraBold.ttf" compile="0" resource="1"
+                  file="content/fonts/Noto_Sans_Mono/static/NotoSansMono-ExtraBold.ttf"/>
+            <FILE id="tpIARG" name="NotoSansMono-ExtraLight.ttf" compile="0" resource="1"
+                  file="content/fonts/Noto_Sans_Mono/static/NotoSansMono-ExtraLight.ttf"/>
+            <FILE id="wThUFr" name="NotoSansMono-Light.ttf" compile="0" resource="1"
+                  file="content/fonts/Noto_Sans_Mono/static/NotoSansMono-Light.ttf"/>
+            <FILE id="DaB7eE" name="NotoSansMono-Medium.ttf" compile="0" resource="1"
+                  file="content/fonts/Noto_Sans_Mono/static/NotoSansMono-Medium.ttf"/>
+            <FILE id="lIscd3" name="NotoSansMono-Regular.ttf" compile="0" resource="1"
+                  file="content/fonts/Noto_Sans_Mono/static/NotoSansMono-Regular.ttf"/>
+            <FILE id="WQYZQt" name="NotoSansMono-SemiBold.ttf" compile="0" resource="1"
+                  file="content/fonts/Noto_Sans_Mono/static/NotoSansMono-SemiBold.ttf"/>
+            <FILE id="cj9Dbj" name="NotoSansMono-Thin.ttf" compile="0" resource="1"
+                  file="content/fonts/Noto_Sans_Mono/static/NotoSansMono-Thin.ttf"/>
+            <FILE id="Pea3IP" name="NotoSansMono_Condensed-Black.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_Condensed-Black.ttf"/>
+            <FILE id="GPmk91" name="NotoSansMono_Condensed-Bold.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_Condensed-Bold.ttf"/>
+            <FILE id="OlGtvh" name="NotoSansMono_Condensed-ExtraBold.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_Condensed-ExtraBold.ttf"/>
+            <FILE id="FGCm3S" name="NotoSansMono_Condensed-ExtraLight.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_Condensed-ExtraLight.ttf"/>
+            <FILE id="t6bDIr" name="NotoSansMono_Condensed-Light.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_Condensed-Light.ttf"/>
+            <FILE id="XqX9ft" name="NotoSansMono_Condensed-Medium.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_Condensed-Medium.ttf"/>
+            <FILE id="NcZXzr" name="NotoSansMono_Condensed-Regular.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_Condensed-Regular.ttf"/>
+            <FILE id="tcgIQ0" name="NotoSansMono_Condensed-SemiBold.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_Condensed-SemiBold.ttf"/>
+            <FILE id="LMjPU1" name="NotoSansMono_Condensed-Thin.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_Condensed-Thin.ttf"/>
+            <FILE id="v8dg0s" name="NotoSansMono_ExtraCondensed-Black.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_ExtraCondensed-Black.ttf"/>
+            <FILE id="lcJIsz" name="NotoSansMono_ExtraCondensed-Bold.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_ExtraCondensed-Bold.ttf"/>
+            <FILE id="vo60cq" name="NotoSansMono_ExtraCondensed-ExtraBold.ttf"
+                  compile="0" resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_ExtraCondensed-ExtraBold.ttf"/>
+            <FILE id="f5BdPu" name="NotoSansMono_ExtraCondensed-ExtraLight.ttf"
+                  compile="0" resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_ExtraCondensed-ExtraLight.ttf"/>
+            <FILE id="YNAbYU" name="NotoSansMono_ExtraCondensed-Light.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_ExtraCondensed-Light.ttf"/>
+            <FILE id="UGmhwi" name="NotoSansMono_ExtraCondensed-Medium.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_ExtraCondensed-Medium.ttf"/>
+            <FILE id="jXUzDd" name="NotoSansMono_ExtraCondensed-Regular.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_ExtraCondensed-Regular.ttf"/>
+            <FILE id="WV1Uvh" name="NotoSansMono_ExtraCondensed-SemiBold.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_ExtraCondensed-SemiBold.ttf"/>
+            <FILE id="SmvRoZ" name="NotoSansMono_ExtraCondensed-Thin.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_ExtraCondensed-Thin.ttf"/>
+            <FILE id="zBvxcC" name="NotoSansMono_SemiCondensed-Black.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_SemiCondensed-Black.ttf"/>
+            <FILE id="Wmm1bQ" name="NotoSansMono_SemiCondensed-Bold.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_SemiCondensed-Bold.ttf"/>
+            <FILE id="I5wG27" name="NotoSansMono_SemiCondensed-ExtraBold.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_SemiCondensed-ExtraBold.ttf"/>
+            <FILE id="r3iF2s" name="NotoSansMono_SemiCondensed-ExtraLight.ttf"
+                  compile="0" resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_SemiCondensed-ExtraLight.ttf"/>
+            <FILE id="hsBD7a" name="NotoSansMono_SemiCondensed-Light.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_SemiCondensed-Light.ttf"/>
+            <FILE id="k4dwx2" name="NotoSansMono_SemiCondensed-Medium.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_SemiCondensed-Medium.ttf"/>
+            <FILE id="OHXT37" name="NotoSansMono_SemiCondensed-Regular.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_SemiCondensed-Regular.ttf"/>
+            <FILE id="NnXYjk" name="NotoSansMono_SemiCondensed-SemiBold.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_SemiCondensed-SemiBold.ttf"/>
+            <FILE id="hFxzjy" name="NotoSansMono_SemiCondensed-Thin.ttf" compile="0"
+                  resource="1" file="content/fonts/Noto_Sans_Mono/static/NotoSansMono_SemiCondensed-Thin.ttf"/>
+          </GROUP>
+          <FILE id="IJdJtO" name="NotoSansMono-VariableFont_wdth,wght.ttf" compile="0"
+                resource="1" file="content/fonts/Noto_Sans_Mono/NotoSansMono-VariableFont_wdth,wght.ttf"/>
+          <FILE id="iVNoS3" name="OFL.txt" compile="0" resource="1" file="content/fonts/Noto_Sans_Mono/OFL.txt"/>
+          <FILE id="egIX7x" name="README.txt" compile="0" resource="1" file="content/fonts/Noto_Sans_Mono/README.txt"/>
+        </GROUP>
+      </GROUP>
+      <GROUP id="{0F8B3F53-315B-8C2D-D7CE-0DF79A9E26AF}" name="TheDarkFable">
+        <FILE id="IradwT" name="enemies.json" compile="0" resource="1" file="content/TheDarkFable/enemies.json"/>
+        <FILE id="WMKECM" name="inanimateObjects.json" compile="0" resource="1"
+              file="content/TheDarkFable/inanimateObjects.json"/>
+        <FILE id="oFDi5s" name="npcs.json" compile="0" resource="1" file="content/TheDarkFable/npcs.json"/>
+        <FILE id="CwpYxr" name="textTriggers.json" compile="0" resource="1"
+              file="content/TheDarkFable/textTriggers.json"/>
+        <FILE id="s64nSs" name="weapons.json" compile="0" resource="1" file="content/TheDarkFable/weapons.json"/>
+      </GROUP>
     </GROUP>
     <GROUP id="{5796C3FE-CDD5-296A-F078-8921C178290A}" name="source">
+      <FILE id="rCcunE" name="DarkFableLookAndFeel.cpp" compile="1" resource="0"
+            file="source/DarkFableLookAndFeel.cpp"/>
+      <FILE id="P8yTIt" name="DarkFableLookAndFeel.h" compile="0" resource="0"
+            file="source/DarkFableLookAndFeel.h"/>
       <FILE id="znPmrX" name="Main.cpp" compile="1" resource="0" file="source/Main.cpp"/>
       <FILE id="dWKiQq" name="MainComponent.cpp" compile="1" resource="0"
             file="source/MainComponent.cpp"/>
@@ -27,14 +131,14 @@
   <EXPORTFORMATS>
     <VS2022 targetFolder="builds/vs2022" extraDefs="_SILENCE_CXX23_ALIGNED_STORAGE_DEPRECATION_WARNING=1">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" characterSet="Unicode" winArchitecture="Win32"/>
-        <CONFIGURATION isDebug="0" name="Release" characterSet="Unicode" winArchitecture="Win32"/>
-        <CONFIGURATION isDebug="1" name="Debug" characterSet="Unicode" winArchitecture="x64"/>
-        <CONFIGURATION isDebug="0" name="Release" characterSet="Unicode" winArchitecture="x64"/>
-        <CONFIGURATION isDebug="1" name="Debug" characterSet="Unicode" winArchitecture="ARM"/>
-        <CONFIGURATION isDebug="0" name="Release" characterSet="Unicode" winArchitecture="ARM"/>
-        <CONFIGURATION isDebug="1" name="Debug" characterSet="Unicode" winArchitecture="ARM64"/>
-        <CONFIGURATION isDebug="0" name="Release" characterSet="Unicode" winArchitecture="ARM64"/>
+        <CONFIGURATION name="Debug" characterSet="Unicode" winArchitecture="Win32" isDebug="1"/>
+        <CONFIGURATION name="Release" characterSet="Unicode" winArchitecture="Win32"/>
+        <CONFIGURATION name="Debug" characterSet="Unicode" winArchitecture="x64" isDebug="1"/>
+        <CONFIGURATION name="Release" characterSet="Unicode" winArchitecture="x64"/>
+        <CONFIGURATION name="Debug" characterSet="Unicode" winArchitecture="ARM" isDebug="1"/>
+        <CONFIGURATION name="Release" characterSet="Unicode" winArchitecture="ARM"/>
+        <CONFIGURATION name="Debug" characterSet="Unicode" winArchitecture="ARM64" isDebug="1"/>
+        <CONFIGURATION name="Release" characterSet="Unicode" winArchitecture="ARM64"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra" path="../submodules/JUCE/modules"/>
@@ -60,8 +164,8 @@
     </VS2022>
     <XCODE_IPHONE targetFolder="builds/iOS" iosContentSharing="0">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" recommendedWarnings="LLVM"/>
-        <CONFIGURATION isDebug="0" name="Release" recommendedWarnings="LLVM"/>
+        <CONFIGURATION name="Debug" recommendedWarnings="LLVM" isDebug="1"/>
+        <CONFIGURATION name="Release" recommendedWarnings="LLVM"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra" path="../submodules/JUCE/modules"/>
@@ -89,8 +193,8 @@
                appSandbox="1" appSandboxInheritance="1" hardenedRuntime="1"
                applicationCategory="public.app-category.adventure-games">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" recommendedWarnings="LLVM"/>
-        <CONFIGURATION isDebug="0" name="Release" recommendedWarnings="LLVM" stripLocalSymbols="1"/>
+        <CONFIGURATION name="Debug" recommendedWarnings="LLVM" isDebug="1"/>
+        <CONFIGURATION name="Release" recommendedWarnings="LLVM" stripLocalSymbols="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra" path="../submodules/JUCE/modules"/>
@@ -116,17 +220,21 @@
     </XCODE_MAC>
     <LINUX_MAKE targetFolder="builds/linux">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" recommendedWarnings="LLVM" linuxArchitecture="-m32"/>
-        <CONFIGURATION isDebug="0" name="Release" recommendedWarnings="LLVM" linkTimeOptimisation="1"
+        <CONFIGURATION name="Debug" recommendedWarnings="LLVM" linuxArchitecture="-m32"
+                       isDebug="1"/>
+        <CONFIGURATION name="Release" recommendedWarnings="LLVM" linkTimeOptimisation="1"
                        linuxArchitecture="-m32"/>
-        <CONFIGURATION isDebug="1" name="Debug" recommendedWarnings="LLVM" linuxArchitecture="-m64"/>
-        <CONFIGURATION isDebug="0" name="Release" recommendedWarnings="LLVM" linkTimeOptimisation="1"
+        <CONFIGURATION name="Debug" recommendedWarnings="LLVM" linuxArchitecture="-m64"
+                       isDebug="1"/>
+        <CONFIGURATION name="Release" recommendedWarnings="LLVM" linkTimeOptimisation="1"
                        linuxArchitecture="-m64"/>
-        <CONFIGURATION isDebug="1" name="Debug" recommendedWarnings="LLVM" linuxArchitecture="-march=armv7"/>
-        <CONFIGURATION isDebug="0" name="Release" recommendedWarnings="LLVM" linkTimeOptimisation="1"
+        <CONFIGURATION name="Debug" recommendedWarnings="LLVM" linuxArchitecture="-march=armv7"
+                       isDebug="1"/>
+        <CONFIGURATION name="Release" recommendedWarnings="LLVM" linkTimeOptimisation="1"
                        linuxArchitecture="-march=armv7"/>
-        <CONFIGURATION isDebug="1" name="Debug" recommendedWarnings="LLVM" linuxArchitecture="-march=armv8-a"/>
-        <CONFIGURATION isDebug="0" name="Release" recommendedWarnings="LLVM" linkTimeOptimisation="1"
+        <CONFIGURATION name="Debug" recommendedWarnings="LLVM" linuxArchitecture="-march=armv8-a"
+                       isDebug="1"/>
+        <CONFIGURATION name="Release" recommendedWarnings="LLVM" linkTimeOptimisation="1"
                        linuxArchitecture="-march=armv8-a"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -156,8 +264,8 @@
                    androidReadMediaAudioPermission="0" androidInternetNeeded="0"
                    androidPushNotifications="0">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" recommendedWarnings="LLVM"/>
-        <CONFIGURATION isDebug="0" name="Release" recommendedWarnings="LLVM" linkTimeOptimisation="1"/>
+        <CONFIGURATION name="Debug" recommendedWarnings="LLVM" isDebug="1"/>
+        <CONFIGURATION name="Release" recommendedWarnings="LLVM" linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra" path="../submodules/JUCE/modules"/>

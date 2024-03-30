@@ -2,46 +2,44 @@
 
 MainComponent::MainComponent()
 {
-    gameMapState.addListener (this);
+    worldState.addListener (this);
     editor.setSize (1024, 1024);
-
     viewport.setViewedComponent (&editor, false);
-    addAndMakeVisible (viewport);
 
+    worldStateEditor.addPropertyParser (std::make_unique<DifficultyPropertyParser>());
+    worldStateEditor.addPropertyParser (std::make_unique<DoorLockStatePropertyParser>());
+    worldStateEditor.addPropertyParser (std::make_unique<MaterialPropertyParser>());
+    worldStateEditor.addPropertyParser (std::make_unique<MoveTypePropertyParser>());
+    worldStateEditor.addPropertyParser (std::make_unique<StatusConditionPropertyParser>());
+
+    tabbedComp.addTab (TRANS ("Game Map"), Colours::black, &viewport, false);
+    tabbedComp.addTab (TRANS ("World State"), Colours::black, &worldStateEditor, false);
+
+    addAndMakeVisible (tabbedComp);
     setSize (800, 800);
+
+    triggerAsyncUpdate();
 }
 
 MainComponent::~MainComponent()
 {
-    gameMapState.removeListener (this);
+    worldState.removeListener (this);
     undoManager.clearUndoHistory(); // Do this explicitly because of the destruction order.
 }
 
 //==============================================================================
 Rectangle<int> MainComponent::calculateMapBounds() const
 {
-    int top = 0, bottom = 0,
-        left = 0, right = 0;
+    RectangleList<int> list;
 
-    for (const auto& c : gameMapState)
+    for (const auto& c : worldState)
     {
-        if (! c.hasProperty (WorldObject::positionId))
-            continue;
-
-        const auto pos = WorldObject (c).getPosition();
-        top     = jmin (pos.y, top);
-        bottom  = jmax (pos.y, top);
-        left    = jmin (pos.x, top);
-        right   = jmax (pos.x, top);
+        const auto rect = WorldObject (c).getDimensions();
+        if (! rect.isEmpty() || rect.isFinite())
+            list.addWithoutMerging (rect);
     }
 
-    auto b = Rectangle<int>::leftTopRightBottom (left, top, right, bottom);
-
-    const auto pos = b.getPosition();
-    if (pos.y < 0 || pos.x < 0)
-        b.translate (std::abs (pos.x), std::abs (pos.y));
-
-    return b;
+    return list.getBounds();
 }
 
 //==============================================================================
@@ -52,7 +50,7 @@ void MainComponent::paint (Graphics& g)
 
 void MainComponent::resized()
 {
-    viewport.setBounds (getLocalBounds().reduced (8));
+    tabbedComp.setBounds (getLocalBounds().reduced (8));
 }
 
 void MainComponent::handleAsyncUpdate()

@@ -1,19 +1,19 @@
 #include "MainComponent.h"
 
 //==============================================================================
-class MainWindow final : public juce::DocumentWindow
+class MainWindow final : public DocumentWindow
 {
 public:
     MainWindow (const String& name) :
         DocumentWindow (name, Colours::black, DocumentWindow::allButtons)
     {
-        setBackgroundColour (Desktop::getInstance().getDefaultLookAndFeel()
-                                                   .findColour (ResizableWindow::backgroundColourId));
-
         setUsingNativeTitleBar (true);
+        Desktop::getInstance().setDefaultLookAndFeel (&lookAndFeel);
+        setBackgroundColour (findColour (ResizableWindow::backgroundColourId));
+        setLookAndFeel (&lookAndFeel);
         setContentOwned (new MainComponent(), true);
 
-       #if JUCE_IOS || JUCE_ANDROID
+       #if SQUAREPINE_IS_MOBILE
         setFullScreen (true);
        #else
         setResizable (true, true);
@@ -36,6 +36,12 @@ public:
 */
     }
 
+    ~MainWindow() override
+    {
+        Desktop::getInstance().setDefaultLookAndFeel (nullptr);
+        setLookAndFeel (nullptr);
+    }
+
     //==============================================================================
     void closeButtonPressed() override
     {
@@ -43,6 +49,9 @@ public:
     }
 
 private:
+    //==============================================================================
+    DarkFableLookAndFeel lookAndFeel;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)
 };
@@ -61,7 +70,7 @@ public:
     String getAppName() const override
     {
         String name;
-        name.preallocateBytes (32);
+        name.preallocateBytes (64);
 
         name
             << ProjectInfo::projectName

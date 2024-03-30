@@ -7,11 +7,12 @@ public:
                  bool shouldBeAnNPC,
                  double directionDegrees = 0.0,
                  UndoManager* undoManager = nullptr) :
-        WorldObject (id),
-        npc (state, isNPCId, undoManager, shouldBeAnNPC),
-        direction (state, directionId, undoManager, snapAngleToWorld (directionDegrees))
+        WorldObject (id)
     {
-        state.appendChild (inventory, undoManager);
+        setupPropAndCache (undoManager);
+
+        setNPC (shouldBeAnNPC, undoManager);
+        setDirection (snapAngleToWorld (directionDegrees), undoManager);
     }
 
     /** */
@@ -22,6 +23,21 @@ public:
         WorldEntity (id, shouldBeAnNPC, toDegrees (cd), undoManager)
     {
     }
+
+    //==============================================================================
+    /** */
+    WorldEntity& setSubtype (String subtypeIdToUse, UndoManager* undoManager = nullptr)
+    {
+        subtypeIdToUse = subtypeIdToUse.trim();
+
+        jassert (subtypeIdToUse.isNotEmpty());
+
+        if (subtypeIdToUse.isNotEmpty())
+            subtype.setValue (subtypeIdToUse, undoManager);
+    }
+
+    /** @returns */
+    [[nodiscard]] const String& getSubtype() const noexcept { return subtype.get(); }
 
     //==============================================================================
     /** @returns */
@@ -92,70 +108,54 @@ public:
     [[nodiscard]] WorldObject getInventoryItem (int index) const noexcept   { return inventory.getChild (index); }
 
     //==============================================================================
-    CREATE_INLINE_CLASS_IDENTIFIER (direction)
-    CREATE_INLINE_CLASS_IDENTIFIER (isNPC)
-    CREATE_INLINE_CLASS_IDENTIFIER (inventory)
+    /** @returns */
+    [[nodiscard]] Difficulty getDifficulty() const noexcept  { return difficulty.get(); }
+    /** */
+    WorldObject& setDifficulty (Difficulty newDifficulty, UndoManager* undoManager = nullptr)
+    {
+        difficulty.setValue (newDifficulty, undoManager);
+        return *this;
+    }
 
 private:
     //==============================================================================
+    CachedValue<String> subtype;
     CachedValue<bool> npc;
     CachedValue<double> direction;
     ValueTree inventory { inventoryId };
+    CachedValue<Difficulty> difficulty;
+
+    //==============================================================================
+    void setupPropAndCache (UndoManager* undoManager)
+    {
+        EngineObject::setupPropAndCache (npc, isNPCId, {}, undoManager);
+        EngineObject::setupPropAndCache (direction, directionId, {}, undoManager);
+        EngineObject::setupPropAndCache (subtype, subtypeId, {}, undoManager);
+        EngineObject::setupPropAndCache (difficulty, difficultyId, {}, undoManager);
+
+        state.appendChild (inventory, undoManager);
+    }
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WorldEntity)
 };
 
 //==============================================================================
-/** */
-class Weapon : public WorldEntity
+class TextTrigger
 {
 public:
-    /** */
-    Weapon (const Identifier& id,
-            double directionDegs,
-            UndoManager* undoManager = nullptr) :
-        WorldEntity (id, true, directionDegs, undoManager)
+    enum class Type
+    {
+        fullscreen,
+        dialogPlain,
+        dialogWithOptions,
+    };
+
+    TextTrigger()
     {
     }
-
-    /** */
-    Weapon (const Identifier& id,
-            CardinalDirection cd = CardinalDirection::north,
-            UndoManager* undoManager = nullptr) :
-        WorldEntity (id, true, cd, undoManager)
-    {
-    }
-
-    //==============================================================================
-    #undef SET_GET
-    #define SET_GET(Name, varName, paramName) \
-        private: \
-            CachedValue<int> varName; \
-            \
-        public: \
-            CREATE_INLINE_CLASS_IDENTIFIER (varName) \
-            void set##Name (int paramName, UndoManager* undoManager = nullptr) \
-            { \
-                varName.setValue (paramName, undoManager); \
-            } \
-            \
-            [[nodiscard]] int get##Name() const noexcept \
-            { \
-                return varName.get(); \
-            }
-
-    SET_GET (Priority, hitPoints, newHitPoints)
-    SET_GET (NormalDamage, normalDamage, newNormalDamage)
-    SET_GET (FireDamage, fireDamage, newFireDamage)
-    SET_GET (IceDamage, iceDamage, newIceDamage)
-    SET_GET (PoisonDamage, poisonDamage, newPoisonDamage)
-
-    #undef SET_GET
 
 private:
-    //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Weapon)
 };
 
 //==============================================================================
@@ -168,7 +168,22 @@ public:
                   UndoManager* undoManager = nullptr) :
         EngineObject (id, undoManager)
     {
+        setupPropAndCache (undoManager);
     }
+
+    FightingMove (const FightingMove& other) :
+        EngineObject (other.state.getType(), nullptr)
+    {
+        setupPropAndCache (nullptr);
+    }
+
+    FightingMove (const ValueTree& other) :
+        EngineObject (other.getType(), nullptr)
+    {
+        setupPropAndCache (nullptr);
+    }
+
+    //==============================================================================
 
     //==============================================================================
     #undef SET_GET
@@ -177,51 +192,62 @@ public:
             CachedValue<Type> varName; \
             \
         public: \
-            CREATE_INLINE_CLASS_IDENTIFIER (varName) \
             FightingMove& set##Name (Type paramName, UndoManager* undoManager = nullptr) \
             { \
                 varName.setValue (paramName, undoManager); \
                 return *this; \
             } \
             \
-            [[nodiscard]] Type get##Name() const noexcept \
-            { \
-                return varName.get(); \
-            }
+            [[nodiscard]] Type get##Name() const noexcept { return varName.get(); }
 
     SET_GET (bool, MakesPhysicalContact, makesContact, makesPhysicalContact)
     SET_GET (MoveType, MoveType, moveType, newMoveType)
 
     //==============================================================================
     #undef SET_GET
-    #define SET_GET(Name, varName, paramName) \
+    #define SET_GET(Name, varName) \
         private: \
             CachedValue<int> varName; \
             \
         public: \
-            CREATE_INLINE_CLASS_IDENTIFIER (varName) \
-            FightingMove& set##Name (int paramName, UndoManager* undoManager = nullptr) \
+            FightingMove& set##Name (int new##Name, UndoManager* undoManager = nullptr) \
             { \
-                varName.setValue (paramName, undoManager); \
+                varName.setValue (new##Name, undoManager); \
                 return *this; \
             } \
             \
-            [[nodiscard]] int get##Name() const noexcept \
-            { \
-                return varName.get(); \
-            }
+            [[nodiscard]] int get##Name() const noexcept { return varName.get(); }
 
-    SET_GET (Priority, hitPoints, newHitPoints)
-    SET_GET (NormalDamage, normalDamage, newNormalDamage)
-    SET_GET (FireDamage, fireDamage, newFireDamage)
-    SET_GET (IceDamage, iceDamage, newIceDamage)
-    SET_GET (PoisonDamage, poisonDamage, newPoisonDamage)
+    SET_GET (Priority, priority)
+    SET_GET (NormalDamage, normalDamage)
+    SET_GET (EarthDamage, earthDamage)
+    SET_GET (WindDamage, windDamage)
+    SET_GET (WaterDamage, waterDamage)
+    SET_GET (IceDamage, iceDamage)
+    SET_GET (FireDamage, fireDamage)
+    SET_GET (ElectricDamage, electricDamage)
+    SET_GET (PlasmaDamage, plasmaDamage)
+    SET_GET (PoisonDamage, poisonDamage)
 
     #undef SET_GET
 
 private:
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FightingMove)
+    void setupPropAndCache (UndoManager* undoManager)
+    {
+        EngineObject::setupPropAndCache (makesContact, makesContactId, {}, undoManager);
+        EngineObject::setupPropAndCache (moveType, moveTypeId, {}, undoManager);
+        EngineObject::setupPropAndCache (priority, priorityId, {}, undoManager);
+        EngineObject::setupPropAndCache (normalDamage, normalDamageId, {}, undoManager);
+        EngineObject::setupPropAndCache (earthDamage, earthDamageId, {}, undoManager);
+        EngineObject::setupPropAndCache (windDamage, windDamageId, {}, undoManager);
+        EngineObject::setupPropAndCache (waterDamage, waterDamageId, {}, undoManager);
+        EngineObject::setupPropAndCache (iceDamage, iceDamageId, {}, undoManager);
+        EngineObject::setupPropAndCache (fireDamage, fireDamageId, {}, undoManager);
+        EngineObject::setupPropAndCache (electricDamage, electricDamageId, {}, undoManager);
+        EngineObject::setupPropAndCache (plasmaDamage, plasmaDamageId, {}, undoManager);
+        EngineObject::setupPropAndCache (poisonDamage, poisonDamageId, {}, undoManager);
+    }
 };
 
 //==============================================================================
@@ -234,9 +260,9 @@ public:
                      bool shouldBeAnNPC,
                      double directionDegrees = 0.0,
                      UndoManager* undoManager = nullptr) :
-        WorldEntity (id, shouldBeAnNPC, directionDegrees, undoManager),
-        statusCondition (state, statusConditionId, undoManager, 0)
+        WorldEntity (id, shouldBeAnNPC, directionDegrees, undoManager)
     {
+        setupPropAndCache (undoManager);
     }
 
     /** */
@@ -255,7 +281,6 @@ public:
             CachedValue<Type> varName; \
             \
         public: \
-            CREATE_INLINE_CLASS_IDENTIFIER (varName) \
             FightableEntity& set##Name (Type paramName, UndoManager* undoManager = nullptr) \
             { \
                 varName.setValue (paramName, undoManager); \
@@ -276,7 +301,6 @@ public:
             CachedValue<ClassName> varName; \
             \
         public: \
-            CREATE_INLINE_CLASS_IDENTIFIER (varName) \
             void set##ClassName (ClassName new##ClassName, UndoManager* undoManager = nullptr) \
             { \
                 varName.setValue (new##ClassName, undoManager); \
@@ -291,30 +315,30 @@ public:
 
     //==============================================================================
     #undef SET_GET
-    #define SET_GET(Name, varName, paramName) \
+    #define SET_GET(ClassName, varName) \
         private: \
             CachedValue<int> varName; \
             \
         public: \
-            CREATE_INLINE_CLASS_IDENTIFIER (varName) \
-            void set##Name (int paramName, UndoManager* undoManager = nullptr) \
+            void set##ClassName (int new##ClassName, UndoManager* undoManager = nullptr) \
             { \
-                varName.setValue (jmax (0, paramName), undoManager); \
+                varName.setValue (jmax (0, new##ClassName), undoManager); \
             } \
             \
-            [[nodiscard]] int get##Name() const noexcept \
+            [[nodiscard]] int get##ClassName() const noexcept \
             { \
                 return varName.get(); \
             }
 
-    SET_GET (Level, level, newLevel)
-    SET_GET (HitPoints, hitPoints, newHitPoints)
-    SET_GET (MaxHitPoints, maxHitPoints, newMaxHitPoints)
-    SET_GET (Attack, attack, newAttack)
-    SET_GET (Defense, defense, newDefense)
-    SET_GET (SpecialAttack, specialAttack, newSpecialAttack)
-    SET_GET (SpecialDefense, specialDefense, newSpecialDefense)
-    SET_GET (Speed, speed, newSpeed)
+    SET_GET (Level, level)
+    SET_GET (Experience, experience)
+    SET_GET (HitPoints, hitPoints)
+    SET_GET (MaxHitPoints, maxHitPoints)
+    SET_GET (Attack, attack)
+    SET_GET (Defense, defense)
+    SET_GET (SpecialAttack, specialAttack)
+    SET_GET (SpecialDefense, specialDefense)
+    SET_GET (Speed, speed)
 
     #undef SET_GET
 
@@ -324,7 +348,56 @@ public:
     /** @returns */
     bool isDead() const     { return getHitPoints() <= 0; }
 
+    //==============================================================================
+    /** @returns */
+    [[nodiscard]] int getNumFightingMoves() const noexcept                  { return fightingMoves.getNumChildren(); }
+    /** @returns */
+    [[nodiscard]] FightingMove getFightingMove (int index) const noexcept   { return fightingMoves.getChild (index); }
+
+    /** */
+    FightableEntity& addFightingMove (const FightingMove& fightingMove, UndoManager* undoManager = nullptr)
+    {
+        fightingMoves.appendChild (fightingMove.getState(), undoManager);
+        return *this;
+    }
+
+    /** */
+    FightableEntity& removeFightingMove (const FightingMove& fightingMove, UndoManager* undoManager = nullptr)
+    {
+        fightingMoves.removeChild (fightingMove.getState(), undoManager);
+        return *this;
+    }
+
+    /** */
+    FightableEntity& removeFightingMove (int index, UndoManager* undoManager = nullptr)
+    {
+        fightingMoves.removeChild (index, undoManager);
+        return *this;
+    }
+
+
 private:
+    //==============================================================================
+    ValueTree fightingMoves { fightingMovesId };
+
+    //==============================================================================
+    void setupPropAndCache (UndoManager* undoManager)
+    {
+        EngineObject::setupPropAndCache (weakAgainstType, weakAgainstTypeId, {}, undoManager);
+        EngineObject::setupPropAndCache (statusCondition, statusConditionId, {}, undoManager);
+        EngineObject::setupPropAndCache (level, levelId, {}, undoManager);
+        EngineObject::setupPropAndCache (experience, experienceId, {}, undoManager);
+        EngineObject::setupPropAndCache (hitPoints, hitPointsId, {}, undoManager);
+        EngineObject::setupPropAndCache (maxHitPoints, maxHitPointsId, {}, undoManager);
+        EngineObject::setupPropAndCache (attack, attackId, {}, undoManager);
+        EngineObject::setupPropAndCache (defense, defenseId, {}, undoManager);
+        EngineObject::setupPropAndCache (specialAttack, specialAttackId, {}, undoManager);
+        EngineObject::setupPropAndCache (specialDefense, specialDefenseId, {}, undoManager);
+        EngineObject::setupPropAndCache (speed, speedId, {}, undoManager);
+
+        state.appendChild (fightingMoves, undoManager);
+    }
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FightableEntity)
 };
@@ -335,37 +408,31 @@ class Player final : public FightableEntity
 {
 public:
     /** */
-    Player (int playerIndexValue = 0,
-            double directionDegrees = 0.0,
+    Player (double directionDegrees = 0.0,
             UndoManager* undoManager = nullptr) :
-        FightableEntity (playerId, false, directionDegrees, undoManager),
-        playerIndex (state, playerIndexId, undoManager, 0)
+        FightableEntity (playerId, false, directionDegrees, undoManager)
     {
-        playerIndex.setValue (playerIndexValue, nullptr);
+        state.removeProperty (interactionIdId, undoManager);
     }
 
     /** */
-    Player (int playerIndexValue = 0,
-            CardinalDirection cd = CardinalDirection::north,
+    Player (CardinalDirection cd = CardinalDirection::north,
             UndoManager* undoManager = nullptr) :
-        Player (playerIndexValue, toDegrees (cd), undoManager)
+        Player (toDegrees (cd), undoManager)
     {
     }
 
-    //==============================================================================
-    /** @returns */
-    [[nodiscard]] int getPlayerIndex() const noexcept { return playerIndex.get(); }
-
-    //==============================================================================
-    CREATE_INLINE_CLASS_IDENTIFIER (player)
-    CREATE_INLINE_CLASS_IDENTIFIER (playerIndex)
+    Player (const Player& other) :
+        FightableEntity (playerId, false, 0.0, nullptr)
+    {
+        state = other.state;
+    }
 
 private:
     //==============================================================================
-    CachedValue<int> playerIndex;
-
-    //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Player)
+    using FightableEntity::getInteractionId;
+    using FightableEntity::isInteractable;
+    using FightableEntity::setInteractionId;
 };
 
 //==============================================================================
@@ -379,6 +446,7 @@ public:
     {
         floor,
         wall,
+        window,
         door,
         stairs,
         elevator,
@@ -394,8 +462,8 @@ public:
                      interactionId,
                      undoManager),
         type (state, typeId, undoManager, static_cast<int> (Type::floor)),
-        material (state, typeId, undoManager, static_cast<int> (Material::stone)),
-        colour (state, typeId, undoManager, Colours::transparentBlack)
+        material (state, materialId, undoManager, static_cast<int> (Material::stone)),
+        colour (state, colourId, undoManager, Colours::transparentBlack)
     {
         state.appendChild (inventory, undoManager);
         setType (tileType, undoManager);
@@ -446,13 +514,6 @@ public:
         return *this;
     }
 
-    //==============================================================================
-    CREATE_INLINE_CLASS_IDENTIFIER (tile)
-    CREATE_INLINE_CLASS_IDENTIFIER (type)
-    CREATE_INLINE_CLASS_IDENTIFIER (material)
-    CREATE_INLINE_CLASS_IDENTIFIER (colour)
-    CREATE_INLINE_CLASS_IDENTIFIER (inventory)
-
 private:
     //==============================================================================
     CachedValue<int> type, material;
@@ -491,9 +552,6 @@ public:
     /** */
     void setDirection (Direction newDirection, UndoManager* undoManager = nullptr)  { direction.setValue (static_cast<int> (newDirection), undoManager); }
 
-    //==============================================================================
-    CREATE_INLINE_CLASS_IDENTIFIER (direction)
-
 private:
     //==============================================================================
     CachedValue<int> direction;
@@ -503,57 +561,21 @@ private:
 };
 
 //==============================================================================
-/** */
-class DoorTile final : public EngineTile
+/** Eliminates boilerplate in defining a tile's set of unlockable logic where applicable.
+
+    @see DoorTile, WindowTile
+*/
+class Unlockable
 {
 public:
     /** */
-    enum class LockState
+    Unlockable (ValueTree& sourceState) :
+        unlockableState (sourceState)
     {
-        unlocked,
-        needsKey,
-        needsSpell,
-        impassable
-    };
-
-    //==============================================================================
-    /** */
-    DoorTile (LockState startLockState = LockState::unlocked,
-              bool shouldBeSecret = false,
-              StringRef interactionId = {},
-              UndoManager* undoManager = nullptr) :
-        EngineTile (Type::door, interactionId, undoManager),
-        lockState (state, lockStateId, undoManager, static_cast<int> (LockState::unlocked)),
-        secret (state, secretId, undoManager, false)
-    {
-        setLockState (startLockState, undoManager);
-        setUnlockableIDs ({}, undoManager);
-        setAsSecret (shouldBeSecret, undoManager);
     }
 
     /** */
-    DoorTile (LockState startLockState,
-              int unlockableID,
-              bool shouldBeSecret = false,
-              StringRef interactionId = {},
-              UndoManager* undoManager = nullptr) :
-        DoorTile (startLockState, shouldBeSecret, interactionId, undoManager)
-    {
-        jassert (startLockState != LockState::unlocked);
-        setUnlockableID (unlockableID, undoManager);
-    }
-
-    //==============================================================================
-    /** @returns */
-    [[nodiscard]] LockState getLockState() const noexcept                           { return static_cast<LockState> (lockState.get()); }
-    /** */
-    void setLockState (LockState newLockState, UndoManager* undoManager = nullptr)  { lockState.setValue (static_cast<int> (newLockState), undoManager); }
-
-    //==============================================================================
-    /** @returns */
-    [[nodiscard]] bool isSecret() const noexcept                                    { return secret.get(); }
-    /** */
-    void setAsSecret (bool shouldBeSecret, UndoManager* undoManager = nullptr)      { secret.setValue (shouldBeSecret, undoManager); }
+    virtual ~Unlockable() = default;
 
     //==============================================================================
     /** @returns */
@@ -561,7 +583,7 @@ public:
     {
         Array<int> ids;
 
-        if (auto* arr = state[unlockableIDsId].getArray())
+        if (auto* arr = unlockableState[unlockableIDsId].getArray())
         {
             for (const auto& v : *arr)
             {
@@ -574,6 +596,7 @@ public:
             jassertfalse;
         }
 
+        ids.sort();
         ids.minimiseStorageOverheads();
         return ids;
     }
@@ -587,7 +610,7 @@ public:
             arr.add (v);
 
         arr.minimiseStorageOverheads();
-        state.setProperty (unlockableIDsId, arr, undoManager);
+        unlockableState.setProperty (unlockableIDsId, arr, undoManager);
     }
 
     /** */
@@ -598,14 +621,65 @@ public:
         setUnlockableIDs (arr, undoManager);
     }
 
-    //==============================================================================
-    CREATE_INLINE_CLASS_IDENTIFIER (lockState)
-    CREATE_INLINE_CLASS_IDENTIFIER (unlockableIDs)
-    CREATE_INLINE_CLASS_IDENTIFIER (secret)
 
 private:
     //==============================================================================
-    CachedValue<int> lockState;
+    ValueTree& unlockableState;
+
+    //==============================================================================
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Unlockable)
+};
+
+//==============================================================================
+/** */
+class DoorTile final : public EngineTile,
+                       public Unlockable
+{
+public:
+    //==============================================================================
+    /** */
+    DoorTile (DoorLockState startLockState = DoorLockState::unlocked,
+              bool shouldBeSecret = false,
+              StringRef interactionId = {},
+              UndoManager* undoManager = nullptr) :
+        EngineTile (Type::door, interactionId, undoManager),
+        Unlockable (state),
+        lockState (state, lockStateId, undoManager, static_cast<DoorLockStateType> (DoorLockState::unlocked)),
+        secret (state, secretId, undoManager, false)
+    {
+        setLockState (startLockState, undoManager);
+        setUnlockableIDs ({}, undoManager);
+        setAsSecret (shouldBeSecret, undoManager);
+    }
+
+    /** */
+    DoorTile (DoorLockState startLockState,
+              int unlockableID,
+              bool shouldBeSecret = false,
+              StringRef interactionId = {},
+              UndoManager* undoManager = nullptr) :
+        DoorTile (startLockState, shouldBeSecret, interactionId, undoManager)
+    {
+        jassert (startLockState != DoorLockState::unlocked);
+        setUnlockableID (unlockableID, undoManager);
+    }
+
+    //==============================================================================
+    /** @returns */
+    [[nodiscard]] DoorLockState getLockState() const noexcept                           { return static_cast<DoorLockState> (lockState.get()); }
+    /** */
+    void setLockState (DoorLockState newLockState, UndoManager* undoManager = nullptr)  { lockState.setValue (static_cast<DoorLockStateType> (newLockState), undoManager); }
+
+    //==============================================================================
+    /** @returns */
+    [[nodiscard]] bool isSecret() const noexcept                                    { return secret.get(); }
+    /** */
+    void setAsSecret (bool shouldBeSecret, UndoManager* undoManager = nullptr)      { secret.setValue (shouldBeSecret, undoManager); }
+
+private:
+    //==============================================================================
+    using DoorLockStateType = VariantConverter<DoorLockState>::Type;
+    CachedValue<DoorLockStateType> lockState;
     CachedValue<bool> secret;
 
     //==============================================================================
@@ -625,9 +699,56 @@ public:
         EngineTile (Type::wall, interactionId, undoManager)
     {
         setMaterial (material, undoManager);
+        setColour (colour, undoManager);
     }
 
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WallTile)
+};
+
+//==============================================================================
+/** */
+class WindowTile final : public EngineTile,
+                         public Unlockable
+{
+public:
+    /** */
+    WindowTile (bool shouldBeOpen = false,
+                WindowTileType subtypeToUse = WindowTileType::permanentlyClosed,
+                Material material = Material::glass,
+                Colour colour = Colours::transparentBlack,
+                StringRef interactionId = {},
+                UndoManager* undoManager = nullptr) :
+        EngineTile (Type::window, interactionId, undoManager),
+        Unlockable (state),
+        subtype (state, windowTileSubtypeId, undoManager, static_cast<WindowTileTypeType> (WindowTileType::permanentlyClosed)),
+        opened (state, openedId, undoManager, false)
+    {
+        setMaterial (material, undoManager);
+        setColour (colour, undoManager);
+        setSubtype (subtypeToUse, undoManager);
+        setOpen (shouldBeOpen, undoManager);
+        setUnlockableIDs ({}, undoManager);
+    }
+
+    //==============================================================================
+    /** @returns */
+    [[nodiscard]] WindowTileType getSubtype() const noexcept                           { return static_cast<WindowTileType> (subtype.get()); }
+    /** */
+    void setSubtype (WindowTileType newSubtype, UndoManager* undoManager = nullptr)    { subtype.setValue (static_cast<WindowTileTypeType> (newSubtype), undoManager);
+}
+    /** @returns */
+    [[nodiscard]] bool isOpen() const noexcept                                  { return opened.get(); }
+    /** */
+    void setOpen (bool shouldBeOpen, UndoManager* undoManager = nullptr)        { opened.setValue (shouldBeOpen, undoManager); }
+
+private:
+    //==============================================================================
+    using WindowTileTypeType = VariantConverter<WindowTileType>::Type;
+    CachedValue<WindowTileTypeType> subtype;
+    CachedValue<bool> opened;
+
+    //==============================================================================
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WindowTile)
 };
