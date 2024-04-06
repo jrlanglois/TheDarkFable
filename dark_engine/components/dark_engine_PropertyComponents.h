@@ -87,8 +87,8 @@ class EnumPickerPropertyComponent : public PropertyComponent,
 public:
     EnumPickerPropertyComponent (const Value& v,
                                  const Identifier& id,
-                                 int preferredHeight = 25) :
-        PropertyComponent (id.toString(), preferredHeight),
+                                 int preferredHeight_ = 25) :
+        PropertyComponent (id.toString(), preferredHeight_),
         value (v)
     {
         addAndMakeVisible (comboBox);
@@ -150,7 +150,7 @@ public:
 
     /** @internal */
     std::unique_ptr<PropertyComponent> createPropertyComponent (const Value& valueToControl,
-                                                                const Identifier& id) const
+                                                                const Identifier& id) const override
     {
         return std::make_unique<MaterialPropertyComponent> (valueToControl, id);
     }
@@ -196,7 +196,7 @@ public:
 
     /** @internal */
     std::unique_ptr<PropertyComponent> createPropertyComponent (const Value& valueToControl,
-                                                                const Identifier& id) const
+                                                                const Identifier& id) const override
     {
         return std::make_unique<MoveTypePropertyComponent> (valueToControl, id);
     }
@@ -241,7 +241,7 @@ public:
 
     /** @internal */
     std::unique_ptr<PropertyComponent> createPropertyComponent (const Value& valueToControl,
-                                                                const Identifier& id) const
+                                                                const Identifier& id) const override
     {
         return std::make_unique<StatusConditionPropertyComponent> (valueToControl, id.toString());
     }
@@ -287,7 +287,7 @@ public:
 
     /** @internal */
     std::unique_ptr<PropertyComponent> createPropertyComponent (const Value& valueToControl,
-                                                                const Identifier& id) const
+                                                                const Identifier& id) const override
     {
         return std::make_unique<DifficultyPropertyComponent> (valueToControl, id.toString());
     }
@@ -333,7 +333,7 @@ public:
 
     /** @internal */
     std::unique_ptr<PropertyComponent> createPropertyComponent (const Value& valueToControl,
-                                                                const Identifier& id) const
+                                                                const Identifier& id) const override
     {
         return std::make_unique<DoorLockStatePropertyComponent> (valueToControl, id.toString());
     }
@@ -406,7 +406,7 @@ public:
 
     /** @internal */
     std::unique_ptr<PropertyComponent> createPropertyComponent (const Value& valueToControl,
-                                                                const Identifier& id) const
+                                                                const Identifier& id) const override
     {
         return std::make_unique<WindowTileTypePropertyComponent> (valueToControl, id.toString());
     }

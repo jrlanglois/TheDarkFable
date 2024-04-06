@@ -64,7 +64,6 @@
 #define JUCE_MODULE_AVAILABLE_squarepine_audio           1
 #define JUCE_MODULE_AVAILABLE_squarepine_core            1
 #define JUCE_MODULE_AVAILABLE_squarepine_graphics        1
-#define JUCE_MODULE_AVAILABLE_squarepine_opus            1
 
 #define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
 

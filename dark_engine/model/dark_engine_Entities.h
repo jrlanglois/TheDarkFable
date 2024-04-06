@@ -34,10 +34,12 @@ public:
 
         if (subtypeIdToUse.isNotEmpty())
             subtype.setValue (subtypeIdToUse, undoManager);
+
+        return *this;
     }
 
     /** @returns */
-    [[nodiscard]] const String& getSubtype() const noexcept { return subtype.get(); }
+    [[nodiscard]] String getSubtype() const noexcept { return subtype.get(); }
 
     //==============================================================================
     /** @returns */

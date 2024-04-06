@@ -27,7 +27,7 @@ namespace BinaryData
     const int            OFL_txtSize = 4482;
 
     extern const char*   README_txt;
-    const int            README_txtSize = 2143;
+    const int            README_txtSize = 2209;
 
     extern const char*   NotoSansMonoBlack_ttf;
     const int            NotoSansMonoBlack_ttfSize = 405388;
@@ -144,7 +144,7 @@ namespace BinaryData
     const int            OFL_txt2Size = 4489;
 
     extern const char*   README_txt2;
-    const int            README_txt2Size = 3623;
+    const int            README_txt2Size = 3722;
 
     extern const char*   enemies_json;
     const int            enemies_jsonSize = 6;

@@ -159,7 +159,6 @@
         <MODULEPATH id="juce_dsp" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_graphics" path="../submodules/squarepine_core/modules"/>
         <MODULEPATH id="dark_engine" path="../../TheDarkFable"/>
-        <MODULEPATH id="squarepine_opus" path="../../../SquarePine"/>
       </MODULEPATHS>
     </VS2022>
     <XCODE_IPHONE targetFolder="builds/iOS" iosContentSharing="0">
@@ -186,12 +185,12 @@
         <MODULEPATH id="juce_dsp" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_graphics" path="../submodules/squarepine_core/modules"/>
         <MODULEPATH id="dark_engine" path="../../TheDarkFable"/>
-        <MODULEPATH id="squarepine_opus" path="../../../SquarePine"/>
       </MODULEPATHS>
     </XCODE_IPHONE>
     <XCODE_MAC targetFolder="builds/macOS" xcodeValidArchs="arm64,arm64e,x86_64"
-               appSandbox="1" appSandboxInheritance="1" hardenedRuntime="1"
-               applicationCategory="public.app-category.adventure-games">
+               hardenedRuntime="1" applicationCategory="public.app-category.games"
+               appSandbox="1" appSandboxOptions="com.apple.security.assets.movies.read-only,com.apple.security.assets.movies.read-write,com.apple.security.assets.music.read-only,com.apple.security.assets.music.read-write,com.apple.security.files.downloads.read-only,com.apple.security.files.downloads.read-write,com.apple.security.files.pictures.read-only,com.apple.security.files.pictures.read-write,com.apple.security.files.user-selected.read-only,com.apple.security.files.user-selected.read-write,com.apple.security.network.client,com.apple.security.network.server,com.apple.security.personal-information.addressbook,com.apple.security.personal-information.calendars,com.apple.security.personal-information.location,com.apple.security.temporary-exception.audio-unit-host,com.apple.security.temporary-exception.mach-lookup.global-name"
+               appSandboxInheritance="1">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" recommendedWarnings="LLVM" isDebug="1"/>
         <CONFIGURATION name="Release" recommendedWarnings="LLVM" stripLocalSymbols="1"/>
@@ -215,7 +214,6 @@
         <MODULEPATH id="juce_dsp" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_graphics" path="../submodules/squarepine_core/modules"/>
         <MODULEPATH id="dark_engine" path="../../TheDarkFable"/>
-        <MODULEPATH id="squarepine_opus" path="../../../SquarePine"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <LINUX_MAKE targetFolder="builds/linux">
@@ -256,7 +254,6 @@
         <MODULEPATH id="juce_dsp" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_graphics" path="../submodules/squarepine_core/modules"/>
         <MODULEPATH id="dark_engine" path="../../TheDarkFable"/>
-        <MODULEPATH id="squarepine_opus" path="../../../SquarePine"/>
       </MODULEPATHS>
     </LINUX_MAKE>
     <ANDROIDSTUDIO targetFolder="builds/android" androidVibratePermissionNeeded="1"
@@ -286,7 +283,6 @@
         <MODULEPATH id="juce_dsp" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_graphics" path="../submodules/squarepine_core/modules"/>
         <MODULEPATH id="dark_engine" path="../../TheDarkFable"/>
-        <MODULEPATH id="squarepine_opus" path="../../../SquarePine"/>
       </MODULEPATHS>
     </ANDROIDSTUDIO>
   </EXPORTFORMATS>
@@ -309,6 +305,5 @@
     <MODULE id="squarepine_audio" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="squarepine_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="squarepine_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
-    <MODULE id="squarepine_opus" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
   </MODULES>
 </JUCERPROJECT>

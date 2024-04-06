@@ -86,3 +86,4 @@ namespace juce
         static var toVar (WindowTileType wtt)           { return static_cast<Type> (wtt); }
     };
 } // namespace juce
+

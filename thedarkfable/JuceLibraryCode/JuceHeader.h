@@ -32,7 +32,6 @@
 #include <squarepine_audio/squarepine_audio.h>
 #include <squarepine_core/squarepine_core.h>
 #include <squarepine_graphics/squarepine_graphics.h>
-#include <squarepine_opus/squarepine_opus.h>
 
 #include "BinaryData.h"
 

@@ -503,7 +503,7 @@ private:
 };
 
 /** @returns */
-inline [[nodiscard]] String toString (StatusCondition statusCondition, bool asArray = false)
+inline String toString (StatusCondition statusCondition, bool asArray = false)
 {
     if (statusCondition.isNormal())
         return TRANS ("Normal");
@@ -551,7 +551,7 @@ enum class CardinalDirection
 };
 
 /** */
-inline [[nodiscard]] double toDegrees (CardinalDirection cd) noexcept
+inline double toDegrees (CardinalDirection cd) noexcept
 {
     switch (cd)
     {
@@ -571,7 +571,7 @@ inline [[nodiscard]] double toDegrees (CardinalDirection cd) noexcept
 }
 
 /** @returns */
-inline [[nodiscard]] String toString (CardinalDirection cd)
+inline String toString (CardinalDirection cd)
 {
     switch (cd)
     {
@@ -590,7 +590,7 @@ inline [[nodiscard]] String toString (CardinalDirection cd)
 
 /** @returns */
 template<typename FloatType>
-inline [[nodiscard]] FloatType snapAngleToWorld (FloatType angleDegrees) noexcept
+inline FloatType snapAngleToWorld (FloatType angleDegrees) noexcept
 {
     constexpr auto ninetyDegs = static_cast<FloatType> (90);
     return std::round (angleDegrees / ninetyDegs) * ninetyDegs;
@@ -620,7 +620,7 @@ enum class Material
 };
 
 /** @returns */
-inline [[nodiscard]] String toString (Material materialType, bool asAdjective = false)
+inline String toString (Material materialType, bool asAdjective = false)
 {
     switch (materialType)
     {
@@ -665,7 +665,7 @@ enum class MoveType
 };
 
 /** */
-inline [[nodiscard]] String toString (MoveType moveType)
+inline String toString (MoveType moveType)
 {
     switch (moveType)
     {
@@ -770,7 +770,7 @@ private:
 };
 
 /** @returns */
-inline [[nodiscard]] String toString (Difficulty difficulty, bool asArray = false)
+inline String toString (Difficulty difficulty, bool asArray = false)
 {
     if (difficulty.appliesToAll())
         return TRANS ("Any");
@@ -808,7 +808,7 @@ enum class DoorLockState
 };
 
 /** @returns */
-inline [[nodiscard]] String toString (DoorLockState doorLockState)
+inline String toString (DoorLockState doorLockState)
 {
     switch (doorLockState)
     {
@@ -837,7 +837,7 @@ enum class WindowTileType
 };
 
 /** @returns */
-inline [[nodiscard]] String toString (WindowTileType windowTileType)
+inline String toString (WindowTileType windowTileType)
 {
     switch (windowTileType)
     {
