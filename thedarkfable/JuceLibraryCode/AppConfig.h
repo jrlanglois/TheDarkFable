@@ -20,50 +20,34 @@
 
 // [END_USER_CODE_SECTION]
 
-/*
-  ==============================================================================
-
-   In accordance with the terms of the JUCE 7 End-Use License Agreement, the
-   JUCE Code in SECTION A cannot be removed, changed or otherwise rendered
-   ineffective unless you have a JUCE Indie or Pro license, or are using JUCE
-   under the GPL v3 license.
-
-   End User License Agreement: www.juce.com/juce-7-licence
-
-  ==============================================================================
-*/
-
-// BEGIN SECTION A
-
-#ifndef JUCE_DISPLAY_SPLASH_SCREEN
- #define JUCE_DISPLAY_SPLASH_SCREEN 0
-#endif
-
-// END SECTION A
-
-#define JUCE_USE_DARK_SPLASH_SCREEN 1
-
-#define JUCE_PROJUCER_VERSION 0x7000b
+#define JUCE_PROJUCER_VERSION 0x80000
 
 //==============================================================================
-#define JUCE_MODULE_AVAILABLE_dark_engine                1
-#define JUCE_MODULE_AVAILABLE_juce_audio_basics          1
-#define JUCE_MODULE_AVAILABLE_juce_audio_devices         1
-#define JUCE_MODULE_AVAILABLE_juce_audio_formats         1
-#define JUCE_MODULE_AVAILABLE_juce_audio_processors      1
-#define JUCE_MODULE_AVAILABLE_juce_audio_utils           1
-#define JUCE_MODULE_AVAILABLE_juce_core                  1
-#define JUCE_MODULE_AVAILABLE_juce_cryptography          1
-#define JUCE_MODULE_AVAILABLE_juce_data_structures       1
-#define JUCE_MODULE_AVAILABLE_juce_dsp                   1
-#define JUCE_MODULE_AVAILABLE_juce_events                1
-#define JUCE_MODULE_AVAILABLE_juce_graphics              1
-#define JUCE_MODULE_AVAILABLE_juce_gui_basics            1
-#define JUCE_MODULE_AVAILABLE_juce_gui_extra             1
-#define JUCE_MODULE_AVAILABLE_juce_opengl                1
-#define JUCE_MODULE_AVAILABLE_squarepine_audio           1
-#define JUCE_MODULE_AVAILABLE_squarepine_core            1
-#define JUCE_MODULE_AVAILABLE_squarepine_graphics        1
+#define JUCE_MODULE_AVAILABLE_dark_engine                 1
+#define JUCE_MODULE_AVAILABLE_juce_analytics              1
+#define JUCE_MODULE_AVAILABLE_juce_animation              1
+#define JUCE_MODULE_AVAILABLE_juce_audio_basics           1
+#define JUCE_MODULE_AVAILABLE_juce_audio_devices          1
+#define JUCE_MODULE_AVAILABLE_juce_audio_formats          1
+#define JUCE_MODULE_AVAILABLE_juce_audio_processors       1
+#define JUCE_MODULE_AVAILABLE_juce_audio_utils            1
+#define JUCE_MODULE_AVAILABLE_juce_box2d                  1
+#define JUCE_MODULE_AVAILABLE_juce_core                   1
+#define JUCE_MODULE_AVAILABLE_juce_cryptography           1
+#define JUCE_MODULE_AVAILABLE_juce_data_structures        1
+#define JUCE_MODULE_AVAILABLE_juce_dsp                    1
+#define JUCE_MODULE_AVAILABLE_juce_events                 1
+#define JUCE_MODULE_AVAILABLE_juce_graphics               1
+#define JUCE_MODULE_AVAILABLE_juce_gui_basics             1
+#define JUCE_MODULE_AVAILABLE_juce_gui_extra              1
+#define JUCE_MODULE_AVAILABLE_juce_midi_ci                1
+#define JUCE_MODULE_AVAILABLE_juce_opengl                 1
+#define JUCE_MODULE_AVAILABLE_juce_osc                    1
+#define JUCE_MODULE_AVAILABLE_juce_product_unlocking      1
+#define JUCE_MODULE_AVAILABLE_juce_video                  1
+#define JUCE_MODULE_AVAILABLE_squarepine_audio            1
+#define JUCE_MODULE_AVAILABLE_squarepine_core             1
+#define JUCE_MODULE_AVAILABLE_squarepine_graphics         1
 
 #define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED 1
 
@@ -83,7 +67,7 @@
 #endif
 
 #ifndef    JUCE_DIRECTSOUND
- #define   JUCE_DIRECTSOUND 0
+ //#define JUCE_DIRECTSOUND 1
 #endif
 
 #ifndef    JUCE_ALSA
@@ -126,11 +110,11 @@
 #endif
 
 #ifndef    JUCE_USE_MP3AUDIOFORMAT
- //#define JUCE_USE_MP3AUDIOFORMAT 0
+ #define   JUCE_USE_MP3AUDIOFORMAT 1
 #endif
 
 #ifndef    JUCE_USE_LAME_AUDIO_FORMAT
- //#define JUCE_USE_LAME_AUDIO_FORMAT 0
+ #define   JUCE_USE_LAME_AUDIO_FORMAT 1
 #endif
 
 #ifndef    JUCE_USE_WINDOWS_MEDIA_FORMAT
@@ -149,7 +133,7 @@
 #endif
 
 #ifndef    JUCE_PLUGINHOST_AU
- //#define JUCE_PLUGINHOST_AU 0
+ #define   JUCE_PLUGINHOST_AU 1
 #endif
 
 #ifndef    JUCE_PLUGINHOST_LADSPA
@@ -172,11 +156,11 @@
 // juce_audio_utils flags:
 
 #ifndef    JUCE_USE_CDREADER
- //#define JUCE_USE_CDREADER 0
+ #define   JUCE_USE_CDREADER 1
 #endif
 
 #ifndef    JUCE_USE_CDBURNER
- //#define JUCE_USE_CDBURNER 0
+ #define   JUCE_USE_CDBURNER 1
 #endif
 
 //==============================================================================
@@ -253,7 +237,7 @@
 // juce_events flags:
 
 #ifndef    JUCE_EXECUTE_APP_SUSPEND_ON_BACKGROUND_TASK
- //#define JUCE_EXECUTE_APP_SUSPEND_ON_BACKGROUND_TASK 0
+ #define   JUCE_EXECUTE_APP_SUSPEND_ON_BACKGROUND_TASK 1
 #endif
 
 //==============================================================================
@@ -261,10 +245,6 @@
 
 #ifndef    JUCE_USE_COREIMAGE_LOADER
  //#define JUCE_USE_COREIMAGE_LOADER 1
-#endif
-
-#ifndef    JUCE_USE_DIRECTWRITE
- //#define JUCE_USE_DIRECTWRITE 1
 #endif
 
 #ifndef    JUCE_DISABLE_COREGRAPHICS_FONT_SMOOTHING
@@ -306,15 +286,30 @@
 // juce_gui_extra flags:
 
 #ifndef    JUCE_WEB_BROWSER
- #define   JUCE_WEB_BROWSER 0
+ #define   JUCE_WEB_BROWSER 1
+#endif
+
+#ifndef    JUCE_USE_WIN_WEBVIEW2_WITH_STATIC_LINKING
+ #define   JUCE_USE_WIN_WEBVIEW2_WITH_STATIC_LINKING 1
 #endif
 
 #ifndef    JUCE_USE_WIN_WEBVIEW2
- //#define JUCE_USE_WIN_WEBVIEW2 0
+ #define   JUCE_USE_WIN_WEBVIEW2 1
 #endif
 
 #ifndef    JUCE_ENABLE_LIVE_CONSTANT_EDITOR
  //#define JUCE_ENABLE_LIVE_CONSTANT_EDITOR 0
+#endif
+
+//==============================================================================
+// juce_video flags:
+
+#ifndef    JUCE_USE_CAMERA
+ #define   JUCE_USE_CAMERA 1
+#endif
+
+#ifndef    JUCE_SYNC_VIDEO_VOLUME_WITH_OS_MEDIA_VOLUME
+ //#define JUCE_SYNC_VIDEO_VOLUME_WITH_OS_MEDIA_VOLUME 1
 #endif
 
 //==============================================================================
@@ -333,14 +328,14 @@
 #endif
 
 #ifndef    SQUAREPINE_USE_REX_AUDIO_FORMAT
- //#define SQUAREPINE_USE_REX_AUDIO_FORMAT 0
+ #define   SQUAREPINE_USE_REX_AUDIO_FORMAT 1
 #endif
 
 //==============================================================================
 // squarepine_core flags:
 
 #ifndef    SQUAREPINE_COMPILE_UNIT_TESTS
- //#define SQUAREPINE_COMPILE_UNIT_TESTS 0
+ #define   SQUAREPINE_COMPILE_UNIT_TESTS 1
 #endif
 
 #ifndef    SQUAREPINE_ARRAY_ITERATION_UNROLLER_MAKE_LINEAR

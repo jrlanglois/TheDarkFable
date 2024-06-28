@@ -3,7 +3,7 @@
 <JUCERPROJECT id="PXnO37" name="The Dark Fable" projectType="guiapp" jucerFormatVersion="1"
               cppLanguageStandard="latest" maxBinaryFileSize="20971520" companyName="jrlanglois"
               companyCopyright="Jo&#235;l R. Langlois" companyEmail="joel.r.langlois@gmail.com"
-              companyWebsite="www.jrlanglois.io">
+              companyWebsite="www.jrlanglois.io" useAppConfig="1" addUsingNamespaceToJuceHeader="1">
   <MAINGROUP id="A3BO0M" name="The Dark Fable">
     <GROUP id="{F214EAF7-1345-C69E-458D-9CFFF68557A9}" name="content">
       <GROUP id="{FB48A397-1518-314C-340F-E67F4EC60362}" name="fonts">
@@ -126,8 +126,12 @@
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" SQUAREPINE_LOG_GOOGLE_ANALYTICS="1"
-               JUCE_DIRECTSOUND="0" JUCE_PLUGINHOST_VST3="1" JUCE_LOAD_CURL_SYMBOLS_LAZILY="1"
-               JUCE_CATCH_UNHANDLED_EXCEPTIONS="1" JUCE_WEB_BROWSER="0" SQUAREPINE_LOG_OPENGL_INFO="1"/>
+               JUCE_PLUGINHOST_VST3="1" JUCE_LOAD_CURL_SYMBOLS_LAZILY="1" JUCE_CATCH_UNHANDLED_EXCEPTIONS="1"
+               JUCE_WEB_BROWSER="1" SQUAREPINE_LOG_OPENGL_INFO="1" SQUAREPINE_USE_REX_AUDIO_FORMAT="1"
+               SQUAREPINE_COMPILE_UNIT_TESTS="1" JUCE_USE_CAMERA="1" JUCE_USE_WIN_WEBVIEW2_WITH_STATIC_LINKING="1"
+               JUCE_USE_WIN_WEBVIEW2="1" JUCE_EXECUTE_APP_SUSPEND_ON_BACKGROUND_TASK="1"
+               JUCE_USE_CDREADER="1" JUCE_USE_CDBURNER="1" JUCE_PLUGINHOST_AU="1"
+               JUCE_USE_MP3AUDIOFORMAT="1" JUCE_USE_LAME_AUDIO_FORMAT="1"/>
   <EXPORTFORMATS>
     <VS2022 targetFolder="builds/vs2022" extraDefs="_SILENCE_CXX23_ALIGNED_STORAGE_DEPRECATION_WARNING=1">
       <CONFIGURATIONS>
@@ -159,6 +163,13 @@
         <MODULEPATH id="juce_dsp" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_graphics" path="../submodules/squarepine_core/modules"/>
         <MODULEPATH id="dark_engine" path="../../TheDarkFable"/>
+        <MODULEPATH id="juce_animation" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_midi_ci" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_box2d" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_analytics" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_product_unlocking" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../submodules/JUCE/modules"/>
       </MODULEPATHS>
     </VS2022>
     <XCODE_IPHONE targetFolder="builds/iOS" iosContentSharing="0">
@@ -185,12 +196,18 @@
         <MODULEPATH id="juce_dsp" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_graphics" path="../submodules/squarepine_core/modules"/>
         <MODULEPATH id="dark_engine" path="../../TheDarkFable"/>
+        <MODULEPATH id="juce_animation" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_midi_ci" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_box2d" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_analytics" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_product_unlocking" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../submodules/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_IPHONE>
     <XCODE_MAC targetFolder="builds/macOS" xcodeValidArchs="arm64,arm64e,x86_64"
                hardenedRuntime="1" applicationCategory="public.app-category.games"
-               appSandbox="1" appSandboxOptions="com.apple.security.assets.movies.read-only,com.apple.security.assets.movies.read-write,com.apple.security.assets.music.read-only,com.apple.security.assets.music.read-write,com.apple.security.files.downloads.read-only,com.apple.security.files.downloads.read-write,com.apple.security.files.pictures.read-only,com.apple.security.files.pictures.read-write,com.apple.security.files.user-selected.read-only,com.apple.security.files.user-selected.read-write,com.apple.security.network.client,com.apple.security.network.server,com.apple.security.personal-information.addressbook,com.apple.security.personal-information.calendars,com.apple.security.personal-information.location,com.apple.security.temporary-exception.audio-unit-host,com.apple.security.temporary-exception.mach-lookup.global-name"
-               appSandboxInheritance="1">
+               appSandbox="1" appSandboxOptions="com.apple.security.assets.movies.read-only,com.apple.security.assets.movies.read-write,com.apple.security.assets.music.read-only,com.apple.security.assets.music.read-write,com.apple.security.files.downloads.read-only,com.apple.security.files.downloads.read-write,com.apple.security.files.pictures.read-only,com.apple.security.files.pictures.read-write,com.apple.security.files.user-selected.read-only,com.apple.security.files.user-selected.read-write,com.apple.security.network.client,com.apple.security.network.server,com.apple.security.personal-information.addressbook,com.apple.security.personal-information.calendars,com.apple.security.personal-information.location,com.apple.security.temporary-exception.audio-unit-host,com.apple.security.temporary-exception.mach-lookup.global-name">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" recommendedWarnings="LLVM" isDebug="1"/>
         <CONFIGURATION name="Release" recommendedWarnings="LLVM" stripLocalSymbols="1"/>
@@ -214,6 +231,13 @@
         <MODULEPATH id="juce_dsp" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_graphics" path="../submodules/squarepine_core/modules"/>
         <MODULEPATH id="dark_engine" path="../../TheDarkFable"/>
+        <MODULEPATH id="juce_animation" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_midi_ci" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_box2d" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_analytics" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_product_unlocking" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../submodules/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <LINUX_MAKE targetFolder="builds/linux">
@@ -254,12 +278,18 @@
         <MODULEPATH id="juce_dsp" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_graphics" path="../submodules/squarepine_core/modules"/>
         <MODULEPATH id="dark_engine" path="../../TheDarkFable"/>
+        <MODULEPATH id="juce_animation" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_midi_ci" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_box2d" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_analytics" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_product_unlocking" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../submodules/JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
     <ANDROIDSTUDIO targetFolder="builds/android" androidVibratePermissionNeeded="1"
-                   androidReadMediaVideoPermission="0" androidReadMediaImagesPermission="0"
-                   androidReadMediaAudioPermission="0" androidInternetNeeded="0"
-                   androidPushNotifications="0">
+                   androidPushNotifications="0" androidTargetSDK="34" androidMinimumSDK="27"
+                   gradleWrapperVersion="8.3" gradleVersion="8.7">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" recommendedWarnings="LLVM" isDebug="1"/>
         <CONFIGURATION name="Release" recommendedWarnings="LLVM" linkTimeOptimisation="1"/>
@@ -283,16 +313,26 @@
         <MODULEPATH id="juce_dsp" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_graphics" path="../submodules/squarepine_core/modules"/>
         <MODULEPATH id="dark_engine" path="../../TheDarkFable"/>
+        <MODULEPATH id="juce_animation" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_midi_ci" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_box2d" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_analytics" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_product_unlocking" path="../submodules/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../submodules/JUCE/modules"/>
       </MODULEPATHS>
     </ANDROIDSTUDIO>
   </EXPORTFORMATS>
   <MODULES>
     <MODULE id="dark_engine" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_analytics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_animation" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_box2d" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
@@ -301,7 +341,12 @@
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_midi_ci" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_product_unlocking" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="0"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="squarepine_audio" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="squarepine_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="squarepine_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>

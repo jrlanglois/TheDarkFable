@@ -62,11 +62,6 @@ DarkFableLookAndFeel::DarkFableLookAndFeel() :
 
     Font::setDefaultMinimumHorizontalScaleFactor (1.0f);
 
-   #if ! (JUCE_MAC || JUCE_IOS) // Because... JUCE's crappy API things.
-    Font::setFallbackFontName (sharedResources->sharedFonts.defaultFamily->name);
-    Font::setFallbackFontStyle ("Regular");
-   #endif
-
     jassert (sharedResources->sharedFonts.defaultFamily != nullptr);
     setDefaultSansSerifTypefaceName (sharedResources->sharedFonts.defaultFamily->name);
     setDefaultSansSerifTypeface (sharedResources->sharedFonts.defaultFamily->regular.normal);
@@ -146,7 +141,7 @@ Typeface::Ptr DarkFableLookAndFeel::getTypefaceForFont (const Font& f)
 //==============================================================================
 Font DarkFableLookAndFeel::createUsefulFont (const Font& source) const
 {
-    return Font (const_cast<DarkFableLookAndFeel*> (this)->getTypefaceForFont (source))
+    return FontOptions (const_cast<DarkFableLookAndFeel*> (this)->getTypefaceForFont (source))
             .withHeight (source.getHeight());
 }
 
@@ -188,7 +183,7 @@ TextLayout DarkFableLookAndFeel::layoutTooltipText (const String& text, Colour t
 
     AttributedString s;
     s.setJustification (Justification::topLeft);
-    s.append (text, Font (dimensions::tooltipFontSize), textColour);
+    s.append (text, FontOptions (dimensions::tooltipFontSize), textColour);
 
     TextLayout tl;
     tl.createLayoutWithBalancedLineLengths (s, (float) dimensions::maxTooltipWidth);
@@ -267,7 +262,7 @@ void DarkFableLookAndFeel::drawMenuBarItem (Graphics& g, int width, int height,
 //==============================================================================
 int DarkFableLookAndFeel::getTabButtonBestWidth (TabBarButton& button, int tabDepth)
 {
-    auto width = Font ((float) tabDepth).getStringWidth (button.getButtonText().trim())
+    auto width = Font (FontOptions ((float) tabDepth)).getStringWidth (button.getButtonText().trim())
                     + getTabButtonOverlap (tabDepth) * 2;
 
     if (auto* extraComponent = button.getExtraComponent())
@@ -592,7 +587,7 @@ void DarkFableLookAndFeel::changeToggleButtonWidthToFitText (ToggleButton& butto
     const auto fontSize = dimensions::defaultFontSize;
     const auto tickWidth = fontSize * 1.1f;
 
-    button.setSize (roundToIntAccurate (Font (fontSize).getStringWidthFloat (button.getButtonText()) + tickWidth + fontSize),
+    button.setSize (roundToIntAccurate (Font (FontOptions (fontSize)).getStringWidthFloat (button.getButtonText()) + tickWidth + fontSize),
                     button.getHeight());
 }
 

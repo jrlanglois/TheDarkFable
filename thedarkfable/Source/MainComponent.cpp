@@ -12,6 +12,8 @@ MainComponent::MainComponent()
     worldStateEditor.addPropertyParser (std::make_unique<MoveTypePropertyParser>());
     worldStateEditor.addPropertyParser (std::make_unique<StatusConditionPropertyParser>());
 
+    worldStateEditor.translateIdToString = darkEngine::getEquivalentName;
+
     tabbedComp.addTab (TRANS ("Game Map"), Colours::black, &viewport, false);
     tabbedComp.addTab (TRANS ("World State"), Colours::black, &worldStateEditor, false);
 

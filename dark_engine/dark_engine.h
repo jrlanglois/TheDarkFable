@@ -24,8 +24,7 @@
 //==============================================================================
 namespace darkEngine
 {
-    using namespace juce;
-    using namespace sp;
+    using namespace sp;  
 
     #include "model/dark_engine_IDs.h"
     #include "model/dark_engine_Core.h"
@@ -35,7 +34,6 @@ namespace darkEngine
 
 namespace darkEngine
 {
-    using namespace juce;
     using namespace sp;
 
     #include "model/dark_engine_Entities.h"

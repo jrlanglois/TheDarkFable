@@ -138,9 +138,9 @@ private:
     //==============================================================================
     UndoManager undoManager;
     GameProcessor gameProcessor;
-    GameMap gameMap;
-    ValueTree worldState { gameMap.getWorldState() };
-    GameMapEditorComponent editor { gameMap };
+    GameMap& gameMap = gameProcessor.gameMap;
+    ValueTree worldState = gameMap.getWorldState();
+    GameMapEditorComponent editor = gameMap;
     Viewport viewport;
 
     ValueTreeEditor worldStateEditor { worldState };

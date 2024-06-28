@@ -1,11 +1,17 @@
-/** */
+/** An object that represents a state of an area, be it a room or a large environment,
+    all the while containing NPCs, a reference to the player, objects of sorts, etc...
+
+    @todo Move the Player to where a "starting point" should be upon load.
+
+    @see GameProcessor, Player
+*/
 class GameMap final : public EngineObject
 {
 public:
     /** */
-    GameMap (UndoManager* undoManager = nullptr) :
+    GameMap (Player& player_, UndoManager* undoManager = nullptr) :
         EngineObject (gameMapId, undoManager),
-        player (CardinalDirection::north, undoManager)
+        player (player_)
     {
         world.appendChild (player.getState(), undoManager);
 
@@ -22,7 +28,6 @@ public:
         world.appendChild (testSecretDoorTileImpassable .getState(), undoManager);
         world.appendChild (testWallTile1.getState(), undoManager);
         world.appendChild (testWallTile2.getState(), undoManager);
-
 
         definitions.appendChild (enemies, undoManager);
         definitions.appendChild (weapons, undoManager);
@@ -80,7 +85,7 @@ private:
               moves { movesId },
               inanimateObjects { inanimateObjectsId };
 
-    Player player;
+    Player& player;
 
     StairTile testStairTileBlocked { StairTile::Direction::blocked },
               testStairTileUp { StairTile::Direction::up },
