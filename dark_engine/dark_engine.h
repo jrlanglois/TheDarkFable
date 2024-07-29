@@ -19,7 +19,6 @@
 //==============================================================================
 #include <squarepine_audio/squarepine_audio.h>
 #include <squarepine_graphics/squarepine_graphics.h>
-#include <bitset>
 
 //==============================================================================
 namespace darkEngine

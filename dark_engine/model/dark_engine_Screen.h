@@ -28,29 +28,32 @@ public:
     void add (std::unique_ptr<TextScreen> newScreen)
     {
         jassert (newScreen != nullptr);
-        if (newScreen == nullptr)
-            return;
 
-        for (auto* s : screens)
+        if (newScreen != nullptr)
         {
-            if (s->getUuid() == newScreen->getUuid())
+            for (auto* s : screens)
             {
-                jassertfalse;
-                return;
+                if (s->getUuid() == newScreen->getUuid())
+                {
+                    jassertfalse;
+                    return;
+                }
             }
-        }
 
-        screens.add (newScreen.release());
+            screens.add (newScreen.release());
+        }
     }
 
+    /** @returns */
+    [[nodiscard]] int getNumScreens() const noexcept                { return screens.size(); }
+    /** @returns */
+    [[nodiscard]] TextScreen* getScreen (int index) const noexcept  { return screens[index]; }
     /** */
-    [[nodiscard]] int getNumScreens() const noexcept    { return screens.size(); }
+    void remove (int index)                                         { screens.remove (index); }
     /** */
-    void remove (int index)                             { screens.remove (index); }
+    void remove (TextScreen* screen)                                { screens.removeObject (screen); }
     /** */
-    void remove (TextScreen* screen)                    { screens.removeObject (screen); }
-    /** */
-    void pop (int amount = 1)                           { screens.removeLast (amount); }
+    void pop (int amount = 1)                                       { screens.removeLast (amount); }
 
 private:
     OwnedArray<TextScreen> screens;

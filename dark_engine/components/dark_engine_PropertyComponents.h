@@ -44,7 +44,7 @@ private:
     }
 
     void populateButtons()
-    { 
+    {
         static const Identifier buttonIndexId = "buttonIndex";
 
         grid.items.clearQuick();
