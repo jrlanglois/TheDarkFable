@@ -140,7 +140,7 @@ private:
     GameProcessor gameProcessor;
     GameMap& gameMap = gameProcessor.gameMap;
     ValueTree worldState = gameMap.getWorldState();
-    GameMapEditorComponent editor = gameMap;
+    GameMapEditorComponent editor { gameMap };
     Viewport viewport;
 
     ValueTreeEditor worldStateEditor { worldState };

@@ -11,7 +11,7 @@
     website:            https://www.jrlanglois.io
     license:            Beerware
     minimumCppStandard: 20
-    dependencies:       squarepine_audio squarepine_graphics
+    dependencies:       squarepine_graphics
 
     END_JUCE_MODULE_DECLARATION
 */
