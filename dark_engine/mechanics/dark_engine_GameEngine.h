@@ -63,16 +63,18 @@ public:
 
     //==============================================================================
     /** */
-    void setWorldObject (WorldObject& wo, Point<int> position, UndoManager* undoManager = nullptr)
+    GameMap& setWorldObject (WorldObject& wo, Point<int> position, UndoManager* undoManager = nullptr)
     {
         wo.setPosition (position);
         world.appendChild (wo.getState(), undoManager);
+        return *this;
     }
 
     /** */
-    void setWorldObject (WorldObject& wo, int x, int y, UndoManager* undoManager = nullptr)
+    GameMap& setWorldObject (WorldObject& wo, int x, int y, UndoManager* undoManager = nullptr)
     {
         setWorldObject (wo, { x, y }, undoManager);
+        return *this;
     }
 
 private:
