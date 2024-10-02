@@ -20,7 +20,7 @@
 
 // [END_USER_CODE_SECTION]
 
-#define JUCE_PROJUCER_VERSION 0x80001
+#define JUCE_PROJUCER_VERSION 0x80002
 
 //==============================================================================
 #define JUCE_MODULE_AVAILABLE_dark_engine                 1
@@ -377,8 +377,8 @@
  //#define SQUAREPINE_USE_AVIR_RESIZER 1
 #endif
 
-#ifndef    SQUAREPINE_USE_CUESDK
- //#define SQUAREPINE_USE_CUESDK 0
+#ifndef    SQUAREPINE_USE_ICUESDK
+ //#define SQUAREPINE_USE_ICUESDK 0
 #endif
 
 #ifndef    SQUAREPINE_LOG_OPENGL_INFO
