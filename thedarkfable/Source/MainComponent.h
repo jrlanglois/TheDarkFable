@@ -106,7 +106,7 @@ private:
 class ObjectEditor : public Component
 {
 public:
-    ObjectEditor ()
+    ObjectEditor()
     {
     }
 

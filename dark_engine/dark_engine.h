@@ -25,6 +25,7 @@ namespace darkEngine
 {
     using namespace sp;  
 
+    #include "static_data/dark_engine_Verbs.h"
     #include "model/dark_engine_IDs.h"
     #include "model/dark_engine_Core.h"
 }
