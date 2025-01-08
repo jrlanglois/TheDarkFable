@@ -303,9 +303,9 @@ public:
 
     //==============================================================================
     /** @returns */
-    [[nodiscard]] String getInteractionId() const noexcept  { return interactionId.get(); }
+    [[nodiscard]] String getInteractionId() const noexcept      { return interactionId.get(); }
     /** @returns */
-    [[nodiscard]] bool isInteractable() const noexcept      { return getInteractionId().isNotEmpty(); }
+    [[nodiscard]] bool isInteractable() const noexcept          { return getInteractionId().isNotEmpty(); }
     /** */
     WorldObject& setInteractionId (StringRef newInteractionId, UndoManager* undoManager = nullptr)
     {
@@ -315,11 +315,11 @@ public:
 
     //==============================================================================
     /** @returns */
-    [[nodiscard]] Colour getLightColour() const noexcept    { return lightColour.get(); }
+    [[nodiscard]] Colour getLightColour() const noexcept        { return lightColour.get(); }
     /** @returns */
-    [[nodiscard]] bool castsLight() const noexcept          { return ! getLightColour().isTransparent(); }
+    [[nodiscard]] bool castsLight() const noexcept              { return ! getLightColour().isTransparent(); }
     /** @returns */
-    [[nodiscard]] int getLightRadius() const noexcept       { return lightRadius.get(); }
+    [[nodiscard]] int getLightRadius() const noexcept           { return lightRadius.get(); }
     /** */
     WorldObject& setLightColour (Colour newLightColour, UndoManager* undoManager = nullptr)
     {
@@ -334,7 +334,7 @@ public:
     }
 
     //==============================================================================
-    /** Depending on your object's state, interactibility could be
+    /** Depending on your object's state, interactability could be
         selectively enabled and disabled here, and any other state might want
         to be considered or changed.
 
@@ -399,10 +399,42 @@ private:
 /** Represents a type of StatusCondition to be used on Weapons and WorldEntities.
 
     @see Weapon, WeaponDefinitions, WorldEntities
+
+    @returns a CSV list of all the StatusConditions if asArray is true,
+    otherwise 
 */
 class StatusCondition final
 {
 public:
+    //==============================================================================
+    /** Flag values, where each flag is a bit, that can be combined
+        and used in the constructor.
+    */
+    enum Flags
+    {
+        /** */
+        burned      = 1 << 0,
+        /** */
+        frozen      = 1 << 1,
+        /** */
+        paralysed   = 1 << 2,
+        /** */
+        poisoned    = 1 << 3,
+        /** */
+        asleep      = 1 << 4,
+        /** */
+        drowsy      = 1 << 5,
+        /** */
+        frostbitten = 1 << 6,
+        /** */
+        bound       = 1 << 7,
+        /** */
+        cursed      = 1 << 8,
+
+        /** The total number of status condition flags, or bits, possible. */
+        numFlags    = 9
+    };
+
     //==============================================================================
     /** Creates a StatusCondition that's 'normal', having no status conditions. */
     constexpr StatusCondition() noexcept = default;
@@ -433,23 +465,19 @@ public:
     [[nodiscard]] constexpr int getFlags() const noexcept                                   { return flags; }
 
     /** Returns the raw flags that are set for this StatusCondition object as a bitset. */
-    [[nodiscard]] std::bitset<16> toBitset() const noexcept
-    {
-        return std::bitset<16> ((uint64_t) flags);
-    }
+    [[nodiscard]] std::bitset<16> toBitset() const noexcept                                 { return std::bitset<16> ((uint64_t) flags); }
 
     /** Tests a set of flags for this object.
         @returns true if any of the flags passed in are set on this object.
     */
     [[nodiscard]] constexpr bool testFlags (int flagsToTest) const noexcept                 { return (flags & flagsToTest) != 0; }
 
-    /** @returns */
-    [[nodiscard]] bool hasMultipleConditions() const noexcept
-    {
-        return std::popcount (static_cast<uint32> (flags)) > 0;
-    }
+    /** @returns the number of applied conditions. A value of 0 means 'normal', or no conditions. */
+    [[nodiscard]] constexpr int getNumConditions() const noexcept                           { return (int) std::popcount (static_cast<uint32> (flags)); }
+    /** @returns true if multiple conditions are applied, or false if 'normal'. */
+    [[nodiscard]] constexpr bool hasMultipleConditions() const noexcept                     { return getNumConditions() > 0; }
 
-    /** @returns */
+    /** @returns true if this has no conditions applied; ie: is normal. */
     [[nodiscard]] constexpr bool isNormal() const noexcept                                  { return flags == 0; }
     /** @returns */
     [[nodiscard]] constexpr bool isBurned() const noexcept                                  { return testFlags (burned); }
@@ -470,33 +498,6 @@ public:
     /** @returns */
     [[nodiscard]] constexpr bool isCursed() const noexcept                                  { return testFlags (cursed); }
 
-    //==============================================================================
-    /** Flag values that can be combined and used in the constructor. */
-    enum Flags
-    {
-        /** */
-        burned      = 1 << 0,
-        /** */
-        frozen      = 1 << 1,
-        /** */
-        paralysed   = 1 << 2,
-        /** */
-        poisoned    = 1 << 3,
-        /** */
-        asleep      = 1 << 4,
-        /** */
-        drowsy      = 1 << 5,
-        /** */
-        frostbitten = 1 << 6,
-        /** */
-        bound       = 1 << 7,
-        /** */
-        cursed      = 1 << 8,
-
-        /** */
-        numFlags    = 9
-    };
-
 private:
     //==============================================================================
     int flags = 0;
@@ -508,22 +509,8 @@ inline String toString (StatusCondition statusCondition, bool asArray = false)
     if (statusCondition.isNormal())
         return TRANS ("Normal");
 
-    if (! asArray)
-    {
-        if (statusCondition.isBurned())         return TRANS ("Burned");
-        if (statusCondition.isFrozen())         return TRANS ("Frozen");
-        if (statusCondition.isParalysed())      return TRANS ("Paralysed");
-        if (statusCondition.isPoisoned())       return TRANS ("Poisoned");
-        if (statusCondition.isAsleep())         return TRANS ("Asleep");
-        if (statusCondition.isDrowsy())         return TRANS ("Drowsy");
-        if (statusCondition.isFrostbitten())    return TRANS ("Frostbitten");
-        if (statusCondition.isBound())          return TRANS ("Bound");
-        if (statusCondition.isCursed())         return TRANS ("Cursed");
-
-        jassertfalse; // ???
-    }
-
     StringArray s;
+    s.ensureStorageAllocated (statusCondition.getNumConditions());
 
     if (statusCondition.isBurned())         s.add (TRANS ("Burned"));
     if (statusCondition.isFrozen())         s.add (TRANS ("Frozen"));
@@ -534,6 +521,9 @@ inline String toString (StatusCondition statusCondition, bool asArray = false)
     if (statusCondition.isFrostbitten())    s.add (TRANS ("Frostbitten"));
     if (statusCondition.isBound())          s.add (TRANS ("Bound"));
     if (statusCondition.isCursed())         s.add (TRANS ("Cursed"));
+
+    if (asArray)
+        return s.strings.getFirst();
 
     return s.joinIntoString (", ");
 }
@@ -597,7 +587,7 @@ inline FloatType snapAngleToWorld (FloatType angleDegrees) noexcept
 }
 
 //==============================================================================
-/** */
+/** A simple list of material types. */
 enum class Material
 {
     tile,
@@ -648,7 +638,7 @@ inline String toString (Material materialType, bool asAdjective = false)
 }
 
 //==============================================================================
-/** */
+/** A list of possible move types. */
 enum class MoveType
 {
     normal,
@@ -678,6 +668,143 @@ inline String toString (MoveType moveType)
         case MoveType::electric:    return TRANS ("Electric");
         case MoveType::plasma:      return TRANS ("Plasma");
         case MoveType::poison:      return TRANS ("Poison");
+
+        default: break;
+    };
+
+    jassertfalse;
+    return {};
+}
+
+//==============================================================================
+/** A list of possible move categories. */
+enum class MoveCategory
+{
+    unknown,
+    physical,
+    special,
+    status,
+
+    numMoveCategories = status + 1
+};
+
+/** */
+inline String toString (MoveCategory moveType)
+{
+    switch (moveType)
+    {
+        case MoveCategory::unknown:     return TRANS ("Unknown");
+        case MoveCategory::physical:    return TRANS ("Physical");
+        case MoveCategory::special:     return TRANS ("Special");
+        case MoveCategory::status:      return TRANS ("Status");
+
+        default: break;
+    };
+
+    jassertfalse;
+    return {};
+}
+
+//==============================================================================
+/** A list of possible natures for a fightable entity. */
+enum class Nature
+{
+    adamant,
+    bashful,
+    bold,
+    brave,
+    calm,
+    careful,
+    docile,
+    gentle,
+    hardy,
+    hasty,
+    impish,
+    jolly,
+    lax,
+    lonely,
+    mild,
+    modest,
+    naive,
+    naughty,
+    quiet,
+    quirky,
+    rash,
+    relaxed,
+    sassy,
+    serious,
+    timid,
+
+    defaultNature = serious,
+
+    numNatures = timid + 1
+};
+
+/** */
+inline String toString (Nature nature)
+{
+    switch (nature)
+    {
+        case Nature::adamant:   return TRANS ("Adamant");
+        case Nature::bashful:   return TRANS ("Bashful");
+        case Nature::bold:      return TRANS ("Bold");
+        case Nature::brave:     return TRANS ("Brave");
+        case Nature::calm:      return TRANS ("Calm");
+        case Nature::careful:   return TRANS ("Careful");
+        case Nature::docile:    return TRANS ("Docile");
+        case Nature::gentle:    return TRANS ("Gentle");
+        case Nature::hardy:     return TRANS ("Hardy");
+        case Nature::hasty:     return TRANS ("Hasty");
+        case Nature::impish:    return TRANS ("Impish");
+        case Nature::jolly:     return TRANS ("Jolly");
+        case Nature::lax:       return TRANS ("Lax");
+        case Nature::lonely:    return TRANS ("Lonely");
+        case Nature::mild:      return TRANS ("Mild");
+        case Nature::modest:    return TRANS ("Modest");
+        case Nature::naive:     return TRANS ("Naive");
+        case Nature::naughty:   return TRANS ("Naughty");
+        case Nature::quiet:     return TRANS ("Quiet");
+        case Nature::quirky:    return TRANS ("Quirky");
+        case Nature::rash:      return TRANS ("Rash");
+        case Nature::relaxed:   return TRANS ("Relaxed");
+        case Nature::sassy:     return TRANS ("Sassy");
+        case Nature::serious:   return TRANS ("Serious");
+        case Nature::timid:     return TRANS ("Timid");
+
+        default: break;
+    };
+
+    jassertfalse;
+    return {};
+}
+
+//==============================================================================
+/** */
+enum class WeatherType
+{
+    clear,
+    foggy,
+    partiallyCloudy,
+    cloudy,
+    overcast,
+    rain,
+    drizzle,
+    snow,
+    stormy
+};
+
+/** */
+inline String toString (WeatherType weatherType)
+{
+    switch (weatherType)
+    {
+        case WeatherType::clear:            return TRANS ("Clear");
+        case WeatherType::foggy:            return TRANS ("Foggy");
+        case WeatherType::partiallyCloudy:  return TRANS ("Partially Cloudy");
+        case WeatherType::cloudy:           return TRANS ("Cloudy");
+        case WeatherType::overcast:         return TRANS ("Overcasrt");
+        case WeatherType::rain:             return TRANS ("Rain");
+        case WeatherType::snow:             return TRANS ("Snow");
 
         default: break;
     };

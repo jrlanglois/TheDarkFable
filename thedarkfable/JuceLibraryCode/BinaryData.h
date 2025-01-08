@@ -144,10 +144,10 @@ namespace BinaryData
     const int            OFL_txt2Size = 4489;
 
     extern const char*   README_txt2;
-    const int            README_txt2Size = 3623;
+    const int            README_txt2Size = 3722;
 
     extern const char*   enemies_json;
-    const int            enemies_jsonSize = 6;
+    const int            enemies_jsonSize = 815;
 
     extern const char*   inanimateObjects_json;
     const int            inanimateObjects_jsonSize = 6;

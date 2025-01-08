@@ -1,3 +1,68 @@
+/** */
+class Weather final : public EngineObject
+{
+public:
+    /** */
+    Weather (const Identifier& id, UndoManager* undoManager = nullptr) :
+        EngineObject (id, undoManager)
+    {
+        setupPropAndCache (undoManager);
+    }
+
+    //==============================================================================
+    /** */
+    EngineObject& setWeatherType (WeatherType weatherTypeToUse, UndoManager* undoManager = nullptr)
+    {
+        weatherType.setValue (weatherTypeToUse, undoManager);
+        return *this;
+    }
+
+    /** @returns */
+    [[nodiscard]] WeatherType getWeatherType() const noexcept { return weatherType.get(); }
+
+    //==============================================================================
+    /** @returns */
+    [[nodiscard]] double getWindDirectionDegrees() const noexcept { return windDirection.get(); }
+
+    /** */
+    EngineObject& setWindDirection (double newDirectionDeg, UndoManager* undoManager = nullptr)
+    {
+        windDirection.setValue (snapAngleToWorld (newDirectionDeg), undoManager);
+        return *this;
+    }
+
+    /** */
+    EngineObject& setWindDirection (CardinalDirection cd, UndoManager* undoManager = nullptr)
+    {
+        setWindDirection (toDegrees (cd), undoManager);
+        return *this;
+    }
+
+    /** */
+    [[nodiscard]] String getDisplayWindDirection() const
+    {
+        const auto degs = getWindDirectionDegrees();
+        if (approximatelyEqual (degs, toDegrees (CardinalDirection::notApplicable)))    return TRANS ("omnidirectional");
+        else if (approximatelyEqual (degs, toDegrees (CardinalDirection::north)))       return TRANS ("north");
+        else if (approximatelyEqual (degs, toDegrees (CardinalDirection::east)))        return TRANS ("east");
+        else if (approximatelyEqual (degs, toDegrees (CardinalDirection::south)))       return TRANS ("south");
+        else if (approximatelyEqual (degs, toDegrees (CardinalDirection::west)))        return TRANS ("west");
+
+        return String (degs);
+    }
+
+private:
+    //==============================================================================
+    CachedValue<double> windDirection;
+    CachedValue<WeatherType> weatherType;
+
+    void setupPropAndCache (UndoManager* undoManager)
+    {
+        EngineObject::setupPropAndCache (windDirection, moveTypeId, toDegrees (CardinalDirection::north), undoManager);
+        EngineObject::setupPropAndCache (weatherType, moveCategoryId, WeatherType::clear, undoManager);
+    }
+};
+
 /** An object that represents a state of an area, be it a room or a large environment,
     all the while containing NPCs, a reference to the player, objects of sorts, etc...
 

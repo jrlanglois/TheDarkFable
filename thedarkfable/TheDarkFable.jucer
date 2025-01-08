@@ -139,8 +139,6 @@
         <CONFIGURATION name="Release" characterSet="Unicode" winArchitecture="Win32"/>
         <CONFIGURATION name="Debug" characterSet="Unicode" winArchitecture="x64" isDebug="1"/>
         <CONFIGURATION name="Release" characterSet="Unicode" winArchitecture="x64"/>
-        <CONFIGURATION name="Debug" characterSet="Unicode" winArchitecture="ARM" isDebug="1"/>
-        <CONFIGURATION name="Release" characterSet="Unicode" winArchitecture="ARM"/>
         <CONFIGURATION name="Debug" characterSet="Unicode" winArchitecture="ARM64" isDebug="1"/>
         <CONFIGURATION name="Release" characterSet="Unicode" winArchitecture="ARM64"/>
       </CONFIGURATIONS>

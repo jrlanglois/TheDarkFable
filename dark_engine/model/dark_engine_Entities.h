@@ -1,11 +1,24 @@
-/** */
+/** An entity in the game world.
+
+    This is can be a player, an NPC, a tile, or a world object.
+
+    It provides a direction, an inventory, a difficulty
+    (which is intended to be used for difficulty scaling at the map's context).
+
+    The subtype is intended to be used for special behaviour, specific to the subclasses.
+    It should allow higher level APIs to reflect on the underlying ValueTree state
+    to construct higher level behaviours, objects, etc, all without having to know
+    the exact type of the entity.
+
+    @see WorldObject, Difficulty, CardinalDirection
+*/
 class WorldEntity : public WorldObject
 {
 public:
-    /** */
+    /** Constructs a basic world entity. */
     WorldEntity (const Identifier& id,
                  bool shouldBeAnNPC,
-                 double directionDegrees = 0.0,
+                 double directionDegrees,
                  UndoManager* undoManager = nullptr) :
         WorldObject (id)
     {
@@ -15,7 +28,7 @@ public:
         setDirection (snapAngleToWorld (directionDegrees), undoManager);
     }
 
-    /** */
+    /** Constructs a north facing world entity. */
     WorldEntity (const Identifier& id,
                  bool shouldBeAnNPC,
                  CardinalDirection cd = CardinalDirection::north,
@@ -119,11 +132,21 @@ public:
         return *this;
     }
 
+    //==============================================================================
+    /** @returns a weight in kilograms. */
+    [[nodiscard]] double getWeight() const noexcept  { return weight.get(); }
+    /** */
+    WorldObject& setWeight (double newWeight, UndoManager* undoManager = nullptr)
+    {
+        weight.setValue (newWeight, undoManager);
+        return *this;
+    }
+
 private:
     //==============================================================================
     CachedValue<String> subtype;
     CachedValue<bool> npc;
-    CachedValue<double> direction;
+    CachedValue<double> direction, weight;
     ValueTree inventory { inventoryId };
     CachedValue<Difficulty> difficulty;
 
@@ -132,6 +155,7 @@ private:
     {
         EngineObject::setupPropAndCache (npc, isNPCId, {}, undoManager);
         EngineObject::setupPropAndCache (direction, directionId, {}, undoManager);
+        EngineObject::setupPropAndCache (weight, weightId, 0.0, undoManager);
         EngineObject::setupPropAndCache (subtype, subtypeId, {}, undoManager);
         EngineObject::setupPropAndCache (difficulty, difficultyId, {}, undoManager);
 
@@ -186,8 +210,6 @@ public:
     }
 
     //==============================================================================
-
-    //==============================================================================
     #undef SET_GET
     #define SET_GET(Type, Name, varName, paramName) \
         private: \
@@ -202,8 +224,8 @@ public:
             \
             [[nodiscard]] Type get##Name() const noexcept { return varName.get(); }
 
-    SET_GET (bool, MakesPhysicalContact, makesContact, makesPhysicalContact)
     SET_GET (MoveType, MoveType, moveType, newMoveType)
+    SET_GET (MoveCategory, MoveCategory, moveCategory, newMoveCategory)
 
     //==============================================================================
     #undef SET_GET
@@ -221,15 +243,10 @@ public:
             [[nodiscard]] int get##Name() const noexcept { return varName.get(); }
 
     SET_GET (Priority, priority)
-    SET_GET (NormalDamage, normalDamage)
-    SET_GET (EarthDamage, earthDamage)
-    SET_GET (WindDamage, windDamage)
-    SET_GET (WaterDamage, waterDamage)
-    SET_GET (IceDamage, iceDamage)
-    SET_GET (FireDamage, fireDamage)
-    SET_GET (ElectricDamage, electricDamage)
-    SET_GET (PlasmaDamage, plasmaDamage)
-    SET_GET (PoisonDamage, poisonDamage)
+    SET_GET (Power, power)
+    SET_GET (Accuracy, accuracy)
+    SET_GET (PowerPoints, powerPoints)
+    SET_GET (MaxPowerPoints, maxPowerPoints)
 
     #undef SET_GET
 
@@ -237,18 +254,13 @@ private:
     //==============================================================================
     void setupPropAndCache (UndoManager* undoManager)
     {
-        EngineObject::setupPropAndCache (makesContact, makesContactId, {}, undoManager);
-        EngineObject::setupPropAndCache (moveType, moveTypeId, {}, undoManager);
-        EngineObject::setupPropAndCache (priority, priorityId, {}, undoManager);
-        EngineObject::setupPropAndCache (normalDamage, normalDamageId, {}, undoManager);
-        EngineObject::setupPropAndCache (earthDamage, earthDamageId, {}, undoManager);
-        EngineObject::setupPropAndCache (windDamage, windDamageId, {}, undoManager);
-        EngineObject::setupPropAndCache (waterDamage, waterDamageId, {}, undoManager);
-        EngineObject::setupPropAndCache (iceDamage, iceDamageId, {}, undoManager);
-        EngineObject::setupPropAndCache (fireDamage, fireDamageId, {}, undoManager);
-        EngineObject::setupPropAndCache (electricDamage, electricDamageId, {}, undoManager);
-        EngineObject::setupPropAndCache (plasmaDamage, plasmaDamageId, {}, undoManager);
-        EngineObject::setupPropAndCache (poisonDamage, poisonDamageId, {}, undoManager);
+        EngineObject::setupPropAndCache (moveType, moveTypeId, MoveType::normal, undoManager);
+        EngineObject::setupPropAndCache (moveCategory, moveCategoryId, MoveCategory::physical, undoManager);
+        EngineObject::setupPropAndCache (priority, priorityId, 0, undoManager);
+        EngineObject::setupPropAndCache (power, powerId, 40, undoManager);
+        EngineObject::setupPropAndCache (accuracy, accuracyId, 100, undoManager);
+        EngineObject::setupPropAndCache (powerPoints, powerPointsId, 5, undoManager);
+        EngineObject::setupPropAndCache (maxPowerPoints, maxPowerPointsId, 10, undoManager);
     }
 };
 
@@ -260,7 +272,7 @@ public:
     /** */
     FightableEntity (const Identifier& id,
                      bool shouldBeAnNPC,
-                     double directionDegrees = 0.0,
+                     double directionDegrees,
                      UndoManager* undoManager = nullptr) :
         WorldEntity (id, shouldBeAnNPC, directionDegrees, undoManager)
     {
@@ -314,6 +326,7 @@ public:
             }
 
     SET_GET (StatusCondition, statusCondition)
+    SET_GET (Nature, nature)
 
     //==============================================================================
     #undef SET_GET
@@ -377,25 +390,26 @@ public:
         return *this;
     }
 
-
 private:
     //==============================================================================
     ValueTree fightingMoves { fightingMovesId };
 
     //==============================================================================
+    /** Loads up stats with reasonable low defaults. */
     void setupPropAndCache (UndoManager* undoManager)
     {
-        EngineObject::setupPropAndCache (weakAgainstType, weakAgainstTypeId, {}, undoManager);
+        EngineObject::setupPropAndCache (weakAgainstType, weakAgainstTypeId, MoveType::normal, undoManager);
         EngineObject::setupPropAndCache (statusCondition, statusConditionId, {}, undoManager);
-        EngineObject::setupPropAndCache (level, levelId, {}, undoManager);
-        EngineObject::setupPropAndCache (experience, experienceId, {}, undoManager);
-        EngineObject::setupPropAndCache (hitPoints, hitPointsId, {}, undoManager);
-        EngineObject::setupPropAndCache (maxHitPoints, maxHitPointsId, {}, undoManager);
-        EngineObject::setupPropAndCache (attack, attackId, {}, undoManager);
-        EngineObject::setupPropAndCache (defense, defenseId, {}, undoManager);
-        EngineObject::setupPropAndCache (specialAttack, specialAttackId, {}, undoManager);
-        EngineObject::setupPropAndCache (specialDefense, specialDefenseId, {}, undoManager);
-        EngineObject::setupPropAndCache (speed, speedId, {}, undoManager);
+        EngineObject::setupPropAndCache (nature, natureId, Nature::defaultNature, undoManager);
+        EngineObject::setupPropAndCache (level, levelId, 1, undoManager);
+        EngineObject::setupPropAndCache (experience, experienceId, 0, undoManager);
+        EngineObject::setupPropAndCache (hitPoints, hitPointsId, 31, undoManager);
+        EngineObject::setupPropAndCache (maxHitPoints, maxHitPointsId, 31, undoManager);
+        EngineObject::setupPropAndCache (attack, attackId, 6, undoManager);
+        EngineObject::setupPropAndCache (defense, defenseId, 4, undoManager);
+        EngineObject::setupPropAndCache (specialAttack, specialAttackId, 6, undoManager);
+        EngineObject::setupPropAndCache (specialDefense, specialDefenseId, 5, undoManager);
+        EngineObject::setupPropAndCache (speed, speedId, 6, undoManager);
 
         state.appendChild (fightingMoves, undoManager);
     }

@@ -19,20 +19,6 @@ namespace juce
     //==============================================================================
     /** */
     template<>
-    struct VariantConverter<Material> final
-    {
-        using Type = int;
-
-        /** @returns */
-        static Material fromVar (const var& v)  { return static_cast<Material> (static_cast<Type> (v)); }
-
-        /** @returns */
-        static var toVar (Material mat)         { return static_cast<Type> (mat); }
-    };
-
-    //==============================================================================
-    /** */
-    template<>
     struct VariantConverter<MoveType> final
     {
         using Type = int;
@@ -47,6 +33,48 @@ namespace juce
     //==============================================================================
     /** */
     template<>
+    struct VariantConverter<MoveCategory> final
+    {
+        using Type = int;
+
+        /** @returns */
+        static MoveCategory fromVar (const var& v)  { return static_cast<MoveCategory> (static_cast<Type> (v)); }
+
+        /** @returns */
+        static var toVar (MoveCategory mc)          { return static_cast<Type> (mc); }
+    };
+
+    //==============================================================================
+    /** */
+    template<>
+    struct VariantConverter<Nature> final
+    {
+        using Type = int;
+
+        /** @returns */
+        static Nature fromVar (const var& v)    { return static_cast<Nature> (static_cast<Type> (v)); }
+
+        /** @returns */
+        static var toVar (Nature n)             { return static_cast<Type> (n); }
+    };
+
+    //==============================================================================
+    /** */
+    template<>
+    struct VariantConverter<WeatherType> final
+    {
+        using Type = int;
+
+        /** @returns */
+        static WeatherType fromVar (const var& wt)  { return static_cast<WeatherType> (static_cast<Type> (wt)); }
+
+        /** @returns */
+        static var toVar (WeatherType wt)           { return static_cast<Type> (wt); }
+    };
+
+    //==============================================================================
+    /** */
+    template<>
     struct VariantConverter<Difficulty> final
     {
         using Type = int;
@@ -56,6 +84,20 @@ namespace juce
 
         /** @returns */
         static var toVar (Difficulty d)             { return static_cast<Type> (d.getFlags()); }
+    };
+
+    //==============================================================================
+    /** */
+    template<>
+    struct VariantConverter<Material> final
+    {
+        using Type = int;
+
+        /** @returns */
+        static Material fromVar (const var& v)  { return static_cast<Material> (static_cast<Type> (v)); }
+
+        /** @returns */
+        static var toVar (Material mat)         { return static_cast<Type> (mat); }
     };
 
     //==============================================================================

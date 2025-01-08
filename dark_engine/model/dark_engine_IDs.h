@@ -1,6 +1,7 @@
 //==============================================================================
 #undef DARK_ENGINE_CREATE_IDS
 #define DARK_ENGINE_CREATE_IDS(X) \
+    X (accuracy) \
     X (attack) \
     X (colour) \
     X (defense) \
@@ -9,15 +10,11 @@
     X (difficulty) \
     X (dimensions) \
     X (direction) \
-    X (earthDamage) \
-    X (electricDamage) \
     X (enemies) \
     X (experience) \
     X (fightingMoves) \
-    X (fireDamage) \
     X (gameMap) \
     X (hitPoints) \
-    X (iceDamage) \
     X (inanimateObjects) \
     X (interactionId) \
     X (inventory) \
@@ -27,19 +24,20 @@
     X (lightColour) \
     X (lightRadius) \
     X (lockState) \
-    X (makesContact) \
+    X (maxPowerPoints) \
     X (mapIcon) \
     X (material) \
     X (maxHitPoints) \
     X (moves) \
+    X (moveCategory) \
     X (moveType) \
     X (name) \
-    X (normalDamage) \
+    X (nature) \
     X (npcs) \
     X (opened) \
-    X (plasmaDamage) \
     X (player) \
-    X (poisonDamage) \
+    X (power) \
+    X (powerPoints) \
     X (priority) \
     X (screenIcon) \
     X (secret) \
@@ -51,10 +49,10 @@
     X (tile) \
     X (type) \
     X (unlockableIDs) \
-    X (waterDamage) \
     X (weakAgainstType) \
     X (weapons) \
-    X (windDamage) \
+    X (weather) \
+    X (weight) \
     X (windowTileSubtype) \
     X (world)
 

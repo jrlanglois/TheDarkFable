@@ -20,7 +20,7 @@
 
 // [END_USER_CODE_SECTION]
 
-#define JUCE_PROJUCER_VERSION 0x80003
+#define JUCE_PROJUCER_VERSION 0x80005
 
 //==============================================================================
 #define JUCE_MODULE_AVAILABLE_dark_engine                 1

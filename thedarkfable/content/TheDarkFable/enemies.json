@@ -1,2 +1,36 @@
-{
-}
+[
+    {
+        "id": 1,
+        "type": "enemy",
+        "subtype": ["Grass", "Poison"],
+        "species": "human",
+        "name":
+        {
+            "english": "Bulbasaur"
+        },
+        "base":
+        {
+            "weakAgainstType": null,
+            "level": 1,
+            "experience": null,
+            "hitPoints": 45,
+            "maxHitPoints": 45,
+            "attack": 49,
+            "defense": 49,
+            "specialAttack": 65,
+            "specialDefense": 65,
+            "speed": 45
+        },
+        "profile":
+        {
+            "gender": "m",
+            "height": 0.7,
+            "weight": 100,
+            "ability":
+            [
+                ["Overgrow", "false"],
+                ["Chlorophyll", "true"]
+            ]
+        }
+  }
+]

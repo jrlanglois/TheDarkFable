@@ -20,6 +20,11 @@ MainComponent::MainComponent()
     addAndMakeVisible (tabbedComp);
     setSize (800, 800);
 
+    gameMap.getState().appendChild (FightingMove ("move").getState(), nullptr);
+    gameMap.getState().appendChild (FightableEntity ("enemy", false).getState(), nullptr);
+
+DBG (gameMap.toJSONString());
+
     triggerAsyncUpdate();
 }
 
