@@ -80,6 +80,9 @@ public:
     {
         world.appendChild (player.getState(), undoManager);
 
+        // Test data
+        world.appendChild (FightingMove ("move").getState(), nullptr);
+        world.appendChild (FightableEntity ("enemy", false).getState(), nullptr);
         world.appendChild (testStairTileBlocked.getState(), undoManager);
         world.appendChild (testStairTileUp.getState(), undoManager);
         world.appendChild (testStairTileDown .getState(), undoManager);

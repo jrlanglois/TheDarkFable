@@ -5,6 +5,12 @@ struct DarkEngineIdToNameMapper final
         ids.minimiseStorageOverheads();
         names.strings.minimiseStorageOverheads();
 
+        /** If you hit this, you probably added a new ID but didn't add a
+            translatable equivalent name for it.
+
+            This name will be used for display purposes, like when editing
+            game properties and children in ValueTree format.
+        */
         jassert (ids.size() == names.size());
     }
 
@@ -20,6 +26,7 @@ struct DarkEngineIdToNameMapper final
 
     StringArray names =
     {
+        NEEDS_TRANS ("Accuracy"),
         NEEDS_TRANS ("Attack"),
         NEEDS_TRANS ("Colour"),
         NEEDS_TRANS ("Defense"),
@@ -28,15 +35,11 @@ struct DarkEngineIdToNameMapper final
         NEEDS_TRANS ("Difficulty"),
         NEEDS_TRANS ("Dimensions"),
         NEEDS_TRANS ("Direction"),
-        NEEDS_TRANS ("Earth Damage"),
-        NEEDS_TRANS ("Electric Damage"),
         NEEDS_TRANS ("Enemies"),
         NEEDS_TRANS ("Experience"),
         NEEDS_TRANS ("Eighting Moves"),
-        NEEDS_TRANS ("Fire Damage"),
         NEEDS_TRANS ("Game Map"),
         NEEDS_TRANS ("Hit Points"),
-        NEEDS_TRANS ("Ice Damage"),
         NEEDS_TRANS ("Inanimate Objects"),
         NEEDS_TRANS ("Interaction ID"),
         NEEDS_TRANS ("Inventory"),
@@ -46,19 +49,20 @@ struct DarkEngineIdToNameMapper final
         NEEDS_TRANS ("Light Colour"),
         NEEDS_TRANS ("Light Radius"),
         NEEDS_TRANS ("Lock State"),
-        NEEDS_TRANS ("Makes Contact"),
+        NEEDS_TRANS ("Max Power Points"),
         NEEDS_TRANS ("Map Icon"),
         NEEDS_TRANS ("Material"),
         NEEDS_TRANS ("Max Hit Points"),
         NEEDS_TRANS ("Moves"),
+        NEEDS_TRANS ("Moves Category"),
         NEEDS_TRANS ("Move Type"),
         NEEDS_TRANS ("Name"),
-        NEEDS_TRANS ("Normal Damage"),
+        NEEDS_TRANS ("Nature"),
         NEEDS_TRANS ("NPCs"),
         NEEDS_TRANS ("Opened"),
-        NEEDS_TRANS ("Plasma Damage"),
         NEEDS_TRANS ("Player"),
-        NEEDS_TRANS ("Poison Damage"),
+        NEEDS_TRANS ("Power"),
+        NEEDS_TRANS ("Power Points"),
         NEEDS_TRANS ("Priority"),
         NEEDS_TRANS ("Screen Icon"),
         NEEDS_TRANS ("Secret"),
@@ -70,10 +74,10 @@ struct DarkEngineIdToNameMapper final
         NEEDS_TRANS ("Tile"),
         NEEDS_TRANS ("Type"),
         NEEDS_TRANS ("Unlockable IDs"),
-        NEEDS_TRANS ("Water Damage"),
         NEEDS_TRANS ("Weak-Against Type"),
         NEEDS_TRANS ("Weapons"),
-        NEEDS_TRANS ("Wind Damage"),
+        NEEDS_TRANS ("Weather"),
+        NEEDS_TRANS ("Weight"),
         NEEDS_TRANS ("Window Tile Subtype"),
         NEEDS_TRANS ("World")
     };

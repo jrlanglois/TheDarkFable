@@ -153,9 +153,9 @@ private:
     //==============================================================================
     void setupPropAndCache (UndoManager* undoManager)
     {
-        EngineObject::setupPropAndCache (npc, isNPCId, {}, undoManager);
-        EngineObject::setupPropAndCache (direction, directionId, {}, undoManager);
-        EngineObject::setupPropAndCache (weight, weightId, 0.0, undoManager);
+        EngineObject::setupPropAndCache (npc, isNPCId, false, undoManager);
+        EngineObject::setupPropAndCache (direction, directionId, 0.0, undoManager);
+        EngineObject::setupPropAndCache (weight, weightId, 80.0, undoManager);
         EngineObject::setupPropAndCache (subtype, subtypeId, {}, undoManager);
         EngineObject::setupPropAndCache (difficulty, difficultyId, {}, undoManager);
 
@@ -428,7 +428,11 @@ public:
             UndoManager* undoManager = nullptr) :
         FightableEntity (playerId, false, directionDegrees, undoManager)
     {
+        // Remove inapplicable properties:
         state.removeProperty (interactionIdId, undoManager);
+        state.removeProperty (isNPCId, undoManager);
+        state.removeProperty (subtypeId, undoManager);
+        state.removeProperty (difficultyId, undoManager);
     }
 
     /** */
@@ -446,6 +450,13 @@ public:
 
 private:
     //==============================================================================
+    // Remove inapplicable methods:
+    using WorldEntity::isNPC;
+    using WorldEntity::setNPC;
+    using WorldEntity::getSubtype;
+    using WorldEntity::setSubtype;
+    using WorldEntity::getDifficulty;
+    using WorldEntity::setDifficulty;
     using FightableEntity::getInteractionId;
     using FightableEntity::isInteractable;
     using FightableEntity::setInteractionId;
