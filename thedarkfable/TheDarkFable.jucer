@@ -168,6 +168,7 @@
         <MODULEPATH id="juce_product_unlocking" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_audio" path="../submodules/squarepine_core/modules"/>
+        <MODULEPATH id="squarepine_cryptography" path="../submodules/squarepine_core/modules"/>
       </MODULEPATHS>
     </VS2022>
     <XCODE_IPHONE targetFolder="builds/iOS" iosContentSharing="0">
@@ -201,6 +202,7 @@
         <MODULEPATH id="juce_product_unlocking" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_audio" path="../submodules/squarepine_core/modules"/>
+        <MODULEPATH id="squarepine_cryptography" path="../submodules/squarepine_core/modules"/>
       </MODULEPATHS>
     </XCODE_IPHONE>
     <XCODE_MAC targetFolder="builds/macOS" xcodeValidArchs="arm64,arm64e,x86_64"
@@ -236,6 +238,7 @@
         <MODULEPATH id="juce_product_unlocking" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_audio" path="../submodules/squarepine_core/modules"/>
+        <MODULEPATH id="squarepine_cryptography" path="../submodules/squarepine_core/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <LINUX_MAKE targetFolder="builds/linux">
@@ -283,6 +286,7 @@
         <MODULEPATH id="juce_product_unlocking" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_audio" path="../submodules/squarepine_core/modules"/>
+        <MODULEPATH id="squarepine_cryptography" path="../submodules/squarepine_core/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
     <ANDROIDSTUDIO targetFolder="builds/android" androidVibratePermissionNeeded="1"
@@ -318,6 +322,7 @@
         <MODULEPATH id="juce_product_unlocking" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../submodules/JUCE/modules"/>
         <MODULEPATH id="squarepine_audio" path="../submodules/squarepine_core/modules"/>
+        <MODULEPATH id="squarepine_cryptography" path="../submodules/squarepine_core/modules"/>
       </MODULEPATHS>
     </ANDROIDSTUDIO>
   </EXPORTFORMATS>
@@ -347,6 +352,8 @@
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="squarepine_audio" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="squarepine_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="squarepine_cryptography" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="0"/>
     <MODULE id="squarepine_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
   </MODULES>
 </JUCERPROJECT>

@@ -38,6 +38,7 @@
 #include <juce_video/juce_video.h>
 #include <squarepine_audio/squarepine_audio.h>
 #include <squarepine_core/squarepine_core.h>
+#include <squarepine_cryptography/squarepine_cryptography.h>
 #include <squarepine_graphics/squarepine_graphics.h>
 
 #include "BinaryData.h"
